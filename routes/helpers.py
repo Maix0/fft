@@ -20,18 +20,19 @@ from routes.api_helpers import *
 def proxy_images(url: str, light=False):
 	if not url:
 		return "/static/img/unknown.jpg"
+	return url
 	if light:
-		return url.replace('https://cdn.intra.42.fr/users/', 'https://friends42.fr/proxy/resize/70/')
+		return url.replace('https://cdn.intra.42.fr/users/', f'{config.domain}/proxy/resize/70/')
 	if 'small' in url or 'medium' in url:
-		return url.replace('https://cdn.intra.42.fr/users/', 'https://friends42.fr/proxy/')
-	return url.replace('https://cdn.intra.42.fr/users/', 'https://friends42.fr/proxy/resize/512/')
+		return #url.replace('https://cdn.intra.42.fr/users/', f'{config.domain}/proxy/')
+	return url.replace('https://cdn.intra.42.fr/users/', f'{config.domain}/proxy/resize/512/')
 
 
 def auth_required(function):
 	@wraps(function)
 	def wrapper(*args, **kwargs):
 		token = request.cookies.get('token')
-		db = Db(os.environ.get("F42_DB", default="database.db"))
+		db = Db(config.db_path)
 		userid = db.get_user_by_bookie(token)
 		if userid == 0:
 			db.close()
@@ -233,7 +234,7 @@ def optimize_locations(data: list[dict]) -> list[dict]:
 def is_shadow_banned(user: int, offender: int, c_db=None):
 	db = c_db
 	if c_db is None:
-		db = Db(os.environ.get("F42_DB", default="database.db"))
+		db = Db(config.db_path)
 	ret = db.is_shadow_banned(user, offender)
 	if c_db is None:
 		db.close()
@@ -244,7 +245,7 @@ def locs(campus=1):
 	status, data = api.get_paged_locations(campus)
 	if status == 200:
 		data = optimize_locations(data)
-		with Db(os.environ.get("F42_DB", default="database.db")) as db:
+		with Db(config.db_path) as db:
 			create_users(db, data)
 		r.set("locations/" + str(campus), zlib.compress(json.dumps(data).encode('utf-8')))
 		r.set("location_last_update/" + str(campus), arrow.now().__str__())
@@ -270,7 +271,7 @@ def date_relative(date, granularity=None):
 
 
 def get_projects(group=False):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	projects = []
 	if group:
 		projects = db.get_group_projects_list(r)
@@ -281,14 +282,14 @@ def get_projects(group=False):
 
 
 def get_cached_projects_with_xp():
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	projects = db.get_xp_projects_list(r)
 	db.close()
 	return projects
 
 
 def find_keyword_project(keyword: str, group: False) -> list:
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	if group:
 		projects = db.search_project_solo(keyword, False)
 	else:
@@ -298,7 +299,7 @@ def find_keyword_project(keyword: str, group: False) -> list:
 
 
 def does_group_project_exists(slug: str) -> bool:
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	ret = db.is_project_a_thing(slug)
 	db.close()
 	return ret

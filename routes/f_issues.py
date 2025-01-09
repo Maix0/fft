@@ -8,7 +8,7 @@ app = Blueprint('issues', __name__, template_folder='templates')
 @app.route('/addissue/<pc>/<int:issue_type>')
 @auth_required
 def create_issue(pc, issue_type, userid):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	if db.is_banned(userid['userid']):
 		return 'banned', 403
 	success = db.create_issue(userid['userid'], pc, int(issue_type))

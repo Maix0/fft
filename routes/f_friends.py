@@ -9,7 +9,7 @@ app = Blueprint('friends', __name__, template_folder='templates')
 @app.route('/friends/add/<add>')
 @auth_required
 def add_friend(add, userid):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	friends = add.split(',')
 	success = True
 	for friend in friends:
@@ -34,7 +34,7 @@ def add_friend(add, userid):
 @app.route('/friends/remove/<remove>')
 @auth_required
 def remove_friend(remove, userid):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	remove_id = db.get_user(remove)
 	if remove_id is None:
 		return '', 404
@@ -46,7 +46,7 @@ def remove_friend(remove, userid):
 @app.route('/friends/set_relation/<who>/<int:relation>')
 @auth_required
 def set_relation(who, relation, userid):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	who_id = db.get_user(who)
 	if who_id is None:
 		db.close()

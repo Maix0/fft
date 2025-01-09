@@ -118,6 +118,11 @@
                 description = "database Path";
                 default = "/var/lib/friends42/database.db";
               };
+              domain = mkOption {
+                type = types.str;
+                description = "domain to be used";
+                default = "localhost";
+              };
             };
 
             config = mkIf cfg.enable (let
@@ -133,6 +138,7 @@
                   F42_BOCAL_KEY = cfg.bocalToken;
                   F42_UPDATE_KEY = cfg.updateToken;
                   F42_DB = cfg.dbPath;
+                  F42_DOMAIN = cfg.domain;
                 };
                 serviceConfig = {
                   User = "friends42";
@@ -143,16 +149,19 @@
               };
             in {
               containers.friends42 = {
-                privateNetwork = true;
+                privateNetwork = false; # TODO: maybe change it ?
                 bindMounts = {
                   "/env" = {
                     hostPath = "${cfg.envFile}";
                     isReadOnly = true;
                   };
+                  "/etc/resolv.conf" = {
+                    hostPath = "/etc/resolv.conf";
+                    isReadOnly = true;
+                  };
                 };
                 autoStart = true;
-                hostAddress = "192.168.100.10";
-                localAddress = "192.168.100.11";
+                hostAddress = "192.168.100.2";
                 config = {
                   networking.firewall.allowedTCPPorts = [80];
                   system.activationScripts.makeVaultWardenDir = lib.stringAfter ["var"] ''
@@ -171,18 +180,17 @@
                     enable = true;
                   };
                   services.nginx = {
-                    upstreams."f.maix.me" = {
+                    upstreams."${cfg.domain}" = {
                       extraConfig = ''
-                        ip_hash;
                       '';
                       servers = builtins.foldl' (a: b: a // b) {} (map (idx: {
                         "127.0.0.1:${toString (10000 + idx)}" = {};
                       }) (lib.range 1 cfg.instanceCount));
                     };
-                    virtualHosts."f.maix.me" = {
+                    virtualHosts."${cfg.domain}" = {
                       locations = {
                         "/" = {
-                          proxyPass = "http://f.maix.me";
+                          proxyPass = "http://${cfg.domain}";
                         };
                       };
                       default = true;
@@ -203,6 +211,7 @@
                           F42_BOCAL_KEY = cfg.bocalToken;
                           F42_UPDATE_KEY = cfg.updateToken;
                           F42_DB = cfg.dbPath;
+                          F42_DOMAIN = cfg.domain;
                         };
                         serviceConfig = {
                           User = "friends42";
@@ -233,11 +242,15 @@
             lib,
             ...
           }: {
+            networking.firewall.extraCommands = ''
+              iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
+            '';
             services.friends42 = {
               enable = true;
               bocalToken = "bocal";
               updateToken = "update";
               envFile = "/etc/envfile";
+              domain = "f.maix.me";
             };
           })
           ({
@@ -286,7 +299,7 @@
                 isNormalUser = true;
                 home = "/home/nixos";
               };
-              networking.hosts = {"192.168.100.11" = ["f.maix.me"];};
+              networking.hosts = {"127.0.0.1" = ["f.maix.me"];};
               services.xserver = {
                 enable = true;
                 displayManager.gdm.enable = true;

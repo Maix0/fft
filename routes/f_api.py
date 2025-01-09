@@ -10,7 +10,7 @@ app = Blueprint('api', __name__, template_folder='templates', static_folder='sta
 def clusters(campus, token):
 	if campus not in maps.available:
 		return f'Campus not supported', 404
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	user = db.get_user_by_bookie(token)
 	issues = db.get_issues()
 	db.close()
@@ -52,7 +52,7 @@ def clusters(campus, token):
 
 @app.route('/public/get_dead_pc/<token>')
 def print_dead_pc(token):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	user = db.get_user_by_bookie(token)
 	issues = db.get_issues()
 	db.close()

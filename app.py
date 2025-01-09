@@ -15,7 +15,7 @@ if config.sentry and config.sentry != '':
 		profiles_sample_rate=config.sentry_profiles_sample_rate
 	)
 
-db = Db(os.environ.get("F42_DB", default="database.db"))
+db = Db(config.db_path)
 db.initialize()
 
 app = Flask(__name__)

@@ -26,7 +26,7 @@ def settings_profile(userid):
 	info = request.json
 	if info is None:
 		return 400
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	if db.is_banned(userid['userid']):
 		return 'banned', 403
 	success = db.set_profile(userid['userid'], dict(info))

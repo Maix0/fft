@@ -4,6 +4,7 @@ import base64
 import json
 from routes.api_helpers import *
 import os
+import config
 
 
 def read_file(filename: str):
@@ -23,7 +24,7 @@ class Db:
 	con: sqlite3.Connection = None
 	is_closed = False
 
-	def __init__(self, filename=os.environ.get("F42_DB", default="database.db")):
+	def __init__(self, filename=config.db_path):
 		self.con = sqlite3.connect(filename)
 		self.con.row_factory = dict_factory
 		self.cur = self.con.cursor()

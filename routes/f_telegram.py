@@ -16,7 +16,7 @@ def telegram_add(userid):
 		return '', 402
 	if not tg_check_hash(data):
 		return '', 403
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	db.enable_notification(userid['userid'], data['id'])
 	db.close()
 	return '', 200
@@ -26,7 +26,7 @@ def telegram_add(userid):
 @auth_required
 def telegram_status(status, msg, userid):
 	status = int(status)
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	ret = db.status_notification(userid['userid'], status)
 	if ret:
 		ret = db.message_notification(userid['userid'], msg.strip())
@@ -40,7 +40,7 @@ def telegram_status(status, msg, userid):
 @app.route('/telegram/admin/add/<login>')
 @auth_required
 def telegram_add_admin(login, userid):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	db.enable_notification(userid['userid'], login)
 	db.close()
 	return '', 200
@@ -50,7 +50,7 @@ def telegram_add_admin(login, userid):
 @app.route('/telegram/remove')
 @auth_required
 def telegram_remove(userid):
-	db = Db(os.environ.get("F42_DB", default="database.db"))
+	db = Db(config.db_path)
 	db.unlink_notification(userid['userid'])
 	db.close()
 	return '', 200
