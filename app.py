@@ -38,4 +38,4 @@ app.jinja_env.globals.update(int=int)
 routes.helpers.create_hooks(app)
 
 if __name__ == '__main__':
-	app.run(debug=bool(os.environ.get("F42_DEBUG"), default="false"), host='0.0.0.0', port=int(os.environ.get("F42_PORT")))
+	app.run(debug=False, host='0.0.0.0', port=int(os.environ.get("F42_PORT")))

@@ -173,3 +173,6 @@ routes/f_wip_*
 wip_*
 session.txt
 projects*.json
+/create-envfile.nix
+/nixos.qcow2
+/result
