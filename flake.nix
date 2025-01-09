@@ -151,14 +151,10 @@
                   };
                 };
                 autoStart = true;
-                forwardPorts = [
-                  {
-                    containerPort = 80;
-                    hostPort = cfg.port;
-                    protocol = "tcp";
-                  }
-                ];
+                hostAddress = "192.168.100.10";
+                localAddress = "192.168.100.11";
                 config = {
+                  networking.firewall.allowedTCPPorts = [80];
                   system.activationScripts.makeVaultWardenDir = lib.stringAfter ["var"] ''
                     mkdir -p /var/lib/friends42
                     chown friends42 /var/lib/friends42
@@ -175,13 +171,21 @@
                     enable = true;
                   };
                   services.nginx = {
-                    upstreams.friends42 = {
+                    upstreams."f.maix.me" = {
                       extraConfig = ''
                         ip_hash;
                       '';
                       servers = builtins.foldl' (a: b: a // b) {} (map (idx: {
-                        "localhost:${toString (10000 + idx)}" = {};
+                        "127.0.0.1:${toString (10000 + idx)}" = {};
                       }) (lib.range 1 cfg.instanceCount));
+                    };
+                    virtualHosts."f.maix.me" = {
+                      locations = {
+                        "/" = {
+                          proxyPass = "http://f.maix.me";
+                        };
+                      };
+                      default = true;
                     };
                     enable = true;
                   };
@@ -242,16 +246,56 @@
             ...
           }: {
             virtualisation.vmVariant = {
-              users.users.root.password = "root";
+              services.openssh.enable = true;
+              services.openssh.settings.PermitRootLogin = "yes";
+              users.users.root = {
+                password = "root";
+                openssh.authorizedKeys.keys = [
+                  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDQ+u6AcgPYW+4qOQWd5pQec/f+ukOnpVECPiPrYzM/D maix@XeMaix"
+                ];
+              };
+              virtualisation.qemu.networkingOptions = [
+                "-device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::5555-:22,\${QEMU_NET_OPTS:+,$QEMU_NET_OPTS}"
+              ];
+
+              users.users.maiboyer = {
+                autoSubUidGidRange = true;
+                createHome = true;
+                isNormalUser = true;
+                initialHashedPassword = lib.mkForce null;
+                group = "maiboyer";
+                home = "/home/maiboyer";
+                openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDQ+u6AcgPYW+4qOQWd5pQec/f+ukOnpVECPiPrYzM/D maix@XeMaix"];
+                password = "1234";
+                extraGroups = ["wheel" "docker"];
+              };
+              environment = {
+                systemPackages = with pkgs; [
+                  docker
+                  firefox
+                  git
+                  bat
+                  gnumake
+                  kitty
+                ];
+              };
+              users.groups.maiboyer = {};
+              security.sudo.wheelNeedsPassword = false;
               users.users.nixos = {
                 password = "nixos";
                 isNormalUser = true;
                 home = "/home/nixos";
               };
+              networking.hosts = {"192.168.100.11" = ["f.maix.me"];};
+              services.xserver = {
+                enable = true;
+                displayManager.gdm.enable = true;
+                desktopManager.gnome.enable = true;
+              };
               virtualisation = {
                 memorySize = 8096;
                 cores = 8;
-                graphics = false;
+                graphics = true;
                 diskSize = 16000; # 32 Gb
               };
             };

@@ -25,6 +25,8 @@ class Api:
 
 	def get_token(self) -> bool:
 		self.add_rate()
+		print(f"{self.key=}")
+		print(f"{self.secret=}")
 		try:
 			r = requests.post(f"{self.intra}/oauth/token", data={
 				"grant_type": "client_credentials",
@@ -32,12 +34,14 @@ class Api:
 				"client_secret": self.secret
 			})
 		except Exception as e:
+			print("get_token:",e );
 			return False
 		if r.status_code == 200:
 			self.token = r.json()["access_token"]
 			self.expire_at = r.json()["expires_in"] + time.time()
 			return True
 		else:
+			print("get_token:", r.text);
 			return False
 
 	def get_access_token(self, token: str, state: str, domain: str) -> str:
@@ -53,8 +57,10 @@ class Api:
 				"redirect_uri": config.redirect_url.replace('{current_domain}', domain)
 			})
 		except Exception as e:
+			print("get_access_token: ",e)
 			return ""
 		if r.status_code != 200:
+			print("get_access_token: ",r.text)
 			return ""
 		return r.json()["access_token"]
 
@@ -65,8 +71,10 @@ class Api:
 				"Authorization": "Bearer " + token
 			})
 		except Exception as e:
+			print("get_token_info: ",e)
 			return None
 		if user_info.status_code != 200:
+			print("get_token_info: ", user_info.text)
 			return None
 		return user_info.json()
 
@@ -128,10 +136,10 @@ class Api:
 			if i > 1:
 				time.sleep(1.1)
 			data, status, headers = self.get(f"/campus/{campus}/locations",
-			                                 ["page[size]=100", "sort=begin_at",
-			                                  "filter[active]=true", "filter[primary]=true",
-			                                  "range[begin_at]=2023-06-10T00:00:00.000Z,2500-01-01T00:00:00.000Z",
-			                                  f"page[number]={i}"])
+											 ["page[size]=100", "sort=begin_at",
+											  "filter[active]=true", "filter[primary]=true",
+											  "range[begin_at]=2023-06-10T00:00:00.000Z,2500-01-01T00:00:00.000Z",
+											  f"page[number]={i}"])
 			if status == 200:
 				ret += data
 				i += 1

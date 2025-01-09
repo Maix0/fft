@@ -60,7 +60,7 @@ def get_detailed_subjects():
 
 
 def insert_to_db(projects):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	for project in projects:
 		db.raw_query(
 			"INSERT OR REPLACE INTO PROJECTS(id, name, slug, solo, subject, description, experience, attachements) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",

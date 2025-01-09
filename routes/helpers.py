@@ -31,7 +31,7 @@ def auth_required(function):
 	@wraps(function)
 	def wrapper(*args, **kwargs):
 		token = request.cookies.get('token')
-		db = Db("database.db")
+		db = Db(os.environ.get("F42_DB", default="database.db"))
 		userid = db.get_user_by_bookie(token)
 		if userid == 0:
 			db.close()
@@ -233,7 +233,7 @@ def optimize_locations(data: list[dict]) -> list[dict]:
 def is_shadow_banned(user: int, offender: int, c_db=None):
 	db = c_db
 	if c_db is None:
-		db = Db("database.db")
+		db = Db(os.environ.get("F42_DB", default="database.db"))
 	ret = db.is_shadow_banned(user, offender)
 	if c_db is None:
 		db.close()
@@ -244,7 +244,7 @@ def locs(campus=1):
 	status, data = api.get_paged_locations(campus)
 	if status == 200:
 		data = optimize_locations(data)
-		with Db("database.db") as db:
+		with Db(os.environ.get("F42_DB", default="database.db")) as db:
 			create_users(db, data)
 		r.set("locations/" + str(campus), zlib.compress(json.dumps(data).encode('utf-8')))
 		r.set("location_last_update/" + str(campus), arrow.now().__str__())
@@ -270,7 +270,7 @@ def date_relative(date, granularity=None):
 
 
 def get_projects(group=False):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	projects = []
 	if group:
 		projects = db.get_group_projects_list(r)
@@ -281,14 +281,14 @@ def get_projects(group=False):
 
 
 def get_cached_projects_with_xp():
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	projects = db.get_xp_projects_list(r)
 	db.close()
 	return projects
 
 
 def find_keyword_project(keyword: str, group: False) -> list:
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	if group:
 		projects = db.search_project_solo(keyword, False)
 	else:
@@ -298,7 +298,7 @@ def find_keyword_project(keyword: str, group: False) -> list:
 
 
 def does_group_project_exists(slug: str) -> bool:
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	ret = db.is_project_a_thing(slug)
 	db.close()
 	return ret

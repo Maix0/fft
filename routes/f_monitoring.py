@@ -18,7 +18,7 @@ def monitoring_db(token):
 	if token != config.update_key:
 		return 'Bad token', 400
 	try:
-		db = Db("database.db")
+		db = Db(os.environ.get("F42_DB", default="database.db"))
 		db.search("eee")
 		db.close()
 	except:

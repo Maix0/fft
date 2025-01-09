@@ -25,7 +25,7 @@ def update_locs_dbg(token, campus):
 @app.route('/goto/<pos>')
 @auth_required
 def goto_route(pos, userid):
-	with Db("database.db") as db:
+	with Db(os.environ.get("F42_DB", default="database.db")) as db:
 		campus_id = db.get_user_by_id(userid['userid'])['campus']
 	if campus_id not in maps.available:
 		return render_template('campus_refresh.html', campus_id=campus_id)
@@ -48,6 +48,6 @@ def update_campus_id(userid):
 		return "L'intra n'est pas disponible pour le moment, réessayez plus tard", 500
 	r.set("campus_refreshed/" + str(userid['userid']), '1', ex=60)
 	campus = find_correct_campus(ret_data)
-	with Db("database.db") as db:
+	with Db(os.environ.get("F42_DB", default="database.db")) as db:
 		db.create_user(ret_data, campus)
 	return redirect('/', 307)

@@ -27,7 +27,7 @@ def logout():
 	token = request.cookies.get('token')
 	if not token:
 		return 'Not logged in', 400
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	db.delete_cookie(token)
 	db.close()
 	resp = make_response('Successfully logged out')
@@ -48,7 +48,7 @@ def auth():
 	user_id = api.get_user_id_by_token(code, state, request.headers['host'])
 	if user_id == 0:
 		return "Error while logging in. Please try again", 500
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	add_id = db.get_user(user_id)
 	if add_id is None:
 		status, resp = api.get_unknown_user(user_id)

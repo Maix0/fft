@@ -36,7 +36,7 @@ def profile(login, userid):
 @app.route('/settings/', methods=['GET', 'POST'])
 @auth_required
 def settings(userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	login = db.get_user_by_id(userid['userid'])['name']
 	user = db.get_user_profile(login)
 	notif = db.has_notifications(userid['userid'])
@@ -55,7 +55,7 @@ def settings(userid):
 @auth_required
 def index(userid):
 	pos = standard_cluster(get_position(userid['userid']))
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	campus_id = db.get_user_by_id(userid['userid'])['campus']
 	if campus_id not in maps.available:
 		db.close()
@@ -119,7 +119,7 @@ def index(userid):
 @app.route('/friends/')
 @auth_required
 def friends_route(userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	theme = db.get_theme(userid['userid'])
 	friend_list = db.get_friends(userid['userid'])
 	shadow_bans = db.get_shadow_bans(userid['userid'])
@@ -151,7 +151,7 @@ def search_route(keyword, friends_only, userid):
 		if len(keyword) < 3:
 			return '', 400
 	keyword = keyword.lower()
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	req_friends = db.search(keyword)
 	projects = []
 	if friends_only == 0:

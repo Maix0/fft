@@ -15,7 +15,7 @@ def iframe(building, userid):
 @app.route('/idle/<building>')
 @auth_required
 def idle(building, userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	campus_id = db.get_user_by_id(userid['userid'])['campus']
 	if campus_id not in maps.available:
 		db.close()
@@ -83,7 +83,7 @@ def idle(building, userid):
 @app.route('/new/<building>')
 @auth_required
 def idle_new(building, userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	campus_id = db.get_user_by_id(userid['userid'])['campus']
 	if campus_id not in maps.available:
 		db.close()

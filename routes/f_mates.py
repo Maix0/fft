@@ -18,7 +18,7 @@ def apply_modifications_mates(db, projects):
 @app.route('/mates/')
 @auth_required
 def mates_default_route(userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	latest = db.get_latest_mates(userid['campus'])
 	apply_modifications_mates(db, latest)
 	theme = db.get_theme(userid['userid'])
@@ -32,7 +32,7 @@ def mates_default_route(userid):
 def mates_route(project, userid):
 	if does_group_project_exists(project) is False:
 		return 'Unknown project', 404
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	projects = db.get_mates(project, userid['campus'])
 	theme = db.get_theme(userid['userid'])
 	project_info = db.get_project(project, r)
@@ -46,7 +46,7 @@ def mates_route(project, userid):
 @app.route("/mates/<project_id>/contact")
 @auth_required
 def contact_mate_route(project_id, userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	project = db.get_mate_by_id(project_id)
 	db.close()
 
@@ -58,7 +58,7 @@ def contact_mate_route(project_id, userid):
 @app.route("/mates/<project_id>/delete")
 @auth_required
 def remove_mate_route(project_id, userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	project = db.get_mate_by_id(project_id)
 	if project is None:
 		db.close()
@@ -86,7 +86,7 @@ def post_mate_route(project, userid):
 	data['progress'] = int(data['progress'])
 	data['people'] = int(data['people'])
 	mates: list[str] = [mate.strip() for mate in data['mates'].split(',')]
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	if db.get_project(project, r)['solo'] == 1:
 		db.close()
 		return 'This is a solo project!!!', 405
@@ -128,7 +128,7 @@ def new_mates_route(project, userid):
 @app.route('/mates/<project_id>/edit/')
 @auth_required
 def edit_mates_route(project_id, userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	project = db.get_mate_by_id(project_id)
 	theme = db.get_theme(userid['userid'])
 	db.close()

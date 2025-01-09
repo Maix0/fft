@@ -9,7 +9,7 @@ app = Blueprint('session', __name__, template_folder='templates')
 @app.route('/sessions/reset/')
 @auth_required
 def session_reset(userid):
-	db = Db("database.db")
+	db = Db(os.environ.get("F42_DB", default="database.db"))
 	db.reset_user_cookies(userid['userid'])
 	db.close()
 	return '', 200
