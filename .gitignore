@@ -173,4 +173,3 @@ routes/f_wip_*
 wip_*
 session.txt
 projects*.json
-config.py

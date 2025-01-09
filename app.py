@@ -1,6 +1,7 @@
 from flask import Flask, g
 from maps.maps import place_to_btn, percent_to_btn
 from db import Db
+import os
 import sentry_sdk
 import config
 import routes.finder
@@ -14,7 +15,7 @@ if config.sentry and config.sentry != '':
 		profiles_sample_rate=config.sentry_profiles_sample_rate
 	)
 
-db = Db("database.db")
+db = Db(os.environ.get("F42_DB", default="database.db"))
 db.initialize()
 
 app = Flask(__name__)
@@ -37,4 +38,4 @@ app.jinja_env.globals.update(int=int)
 routes.helpers.create_hooks(app)
 
 if __name__ == '__main__':
-	app.run(debug=True, host='0.0.0.0', port=8080)
+	app.run(debug=bool(os.environ.get("F42_DEBUG"), default="false"), host='0.0.0.0', port=int(os.environ.get("F42_PORT")))
