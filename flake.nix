@@ -163,8 +163,8 @@
                 autoStart = true;
                 hostAddress = "192.168.100.2";
                 config = {
-                  networking.firewall.allowedTCPPorts = [80];
-                  system.activationScripts.makeVaultWardenDir = lib.stringAfter ["var"] ''
+                  networking.firewall.allowedTCPPorts = [cfg.port];
+                  system.activationScripts.friends42 = lib.stringAfter ["var"] ''
                     mkdir -p /var/lib/friends42
                     chown friends42 /var/lib/friends42
                   '';
@@ -193,6 +193,12 @@
                           proxyPass = "http://${cfg.domain}";
                         };
                       };
+                      listen = [
+                        {
+                          addr = "0.0.0.0";
+                          port = cfg.port;
+                        }
+                      ];
                       default = true;
                     };
                     enable = true;
@@ -205,7 +211,7 @@
                         after = ["network.target"];
                         enable = true;
                         environment = {
-                          F42_PORT = toString 80;
+                          F42_PORT = toString cfg.port;
                           F42_REDIS_PORT = toString cfg.redisPort;
                           F42_REDIS_HOST = "localhost";
                           F42_BOCAL_KEY = cfg.bocalToken;
