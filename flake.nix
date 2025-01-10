@@ -13,6 +13,19 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
+      devShell = pkgs.mkShellNoCC {
+        packages = [
+          (with pkgs.python3.pkgs;
+            python.withPackages (pypkgs:
+              with pypkgs; [
+                redis
+                flask
+                requests
+                arrow
+                sentry-sdk
+              ]))
+        ];
+      };
       packages = rec {
         default = friends42;
         friends42 = with pkgs.python3.pkgs;

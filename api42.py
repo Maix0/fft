@@ -54,13 +54,13 @@ class Api:
 				"client_secret": self.secret,
 				"code": token,
 				"state": state,
-				"redirect_uri": config.redirect_uri
+				"redirect_uri": config.redirect_url
 			})
 		except Exception as e:
-			print("get_access_token: ",e)
+			print("get_access_token: ", e)
 			return ""
 		if r.status_code != 200:
-			print("get_access_token: ",r.text)
+			print("get_access_token: ", r.text)
 			return ""
 		return r.json()["access_token"]
 	

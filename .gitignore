@@ -176,3 +176,4 @@ projects*.json
 /create-envfile.nix
 /nixos.qcow2
 /result
+.envrc
