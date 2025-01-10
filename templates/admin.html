@@ -72,6 +72,31 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="modal fade" id="addWhitelistModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form method="POST" id="addwhitelist">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5">Ajouter une personne sur la whitelist</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="form-floating mb-3">
+							<input type="text" name="login" class="form-control" id="input-desc" placeholder="Lorem ipsum...">
+							<label for="input-desc">login</label>
+						</div>
+					</div>
+					<input type="hidden" name="csrf" value="{{ create_csrf() }}">
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<button type="submit" class="btn btn-primary">Confirmer</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 	
 	<div class="modal fade" id="createSilentModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
@@ -150,6 +175,34 @@
 		</div>
 	{% endif %}
 	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary">
+		<h4>whitelist
+			<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addWhitelistModal">+
+			</button>
+		</h4>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">User ID</th>
+				<th scope="col">Login</th>
+				<th scope="col">-</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for user in whitelist %}
+				<tr>
+					<th scope="row">{{ user.id }}</th>
+					<td>{{ user.user_id }}</td>
+					<td>{{ user.user_login }}</td>
+					<td>
+						<button onclick="del_whitelist({{ user.id }})" class="btn btn-danger btn-sm">-</button>
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary">
 		<h4>Piscines
 			<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createPiscineModal">+
 			</button>
@@ -221,6 +274,16 @@
 			});
 		}
 
+		function del_whitelist(user_id) {
+			fetch(`/admin/whitelist_remove/${user_id}/{{ create_csrf() }}`).then(async response => {
+				triggerToast(await response.text(), response.status === 200);
+				location.reload()
+			}).catch(error => {
+				triggerToast(`Une erreur s'est produite (${error.status})`, false);
+				console.log(error)
+			});
+		}
+
 		function del_piscine(piscine_id) {
 			fetch(`/admin/piscine_remove/${piscine_id}/{{ create_csrf() }}`).then(async response => {
 				triggerToast(await response.text(), response.status === 200);
@@ -277,6 +340,20 @@
 			const formData = new FormData(event.target);
 
 			fetch('/admin/piscine_add', {
+				method: 'POST',
+				body: formData
+			}).then(async response => {
+				triggerToast(await response.text(), response.status === 200);
+				location.reload();
+			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
+		});
+
+		document.getElementById('addwhitelist').addEventListener('submit', function (event) {
+			event.preventDefault();
+
+			const formData = new FormData(event.target);
+
+			fetch('/admin/whitelist_add', {
 				method: 'POST',
 				body: formData
 			}).then(async response => {

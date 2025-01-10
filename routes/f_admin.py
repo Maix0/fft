@@ -17,8 +17,23 @@ def admin(userid):
 			shadow_bans = db.get_all_shadow_bans()
 		piscines = db.get_all_piscines()
 		silents = db.get_all_silents()
-	return render_template('admin.html', user=userid, shadow_bans=shadow_bans, piscines=piscines, silents=silents)
+		whitelist = db.get_all_whitelist()
+	return render_template('admin.html', user=userid, shadow_bans=shadow_bans, piscines=piscines, silents=silents, whitelist=whitelist)
 
+@app.route('/admin/whitelist_add', methods=['POST'])
+@auth_required
+def insert_whilelist(userid):
+	if not userid['admin'] or userid['admin']['level'] < 1:
+		return 'Not authorized', 401
+	if not verify_csrf(request.form['csrf']):
+		return 'Please refresh and try again', 401
+	with Db() as db:
+		user_id = api.get_user_id_by_login(request.form['login'])
+		print(f"user id {request.form['login']}")
+		if user_id == 0:
+			return 'Login does not exist'
+		db.add_whitelist(user_id=user_id, user_login=request.form['login'])
+	return ''
 
 @app.route('/admin/piscine_add', methods=['POST'])
 @auth_required
@@ -54,6 +69,16 @@ def insert_silent(userid):
 		db.insert_silent(int(request.form['campus']), request.form['cluster'])
 	return ''
 
+@app.route('/admin/whitelist_remove/<int:ban_id>/<csrf>')
+@auth_required
+def whitelist_remove(ban_id, csrf, userid):
+	if not userid['admin'] or userid['admin']['level'] < 1:
+		return 'Not authorized', 401
+	if not verify_csrf(csrf):
+		return 'Please refresh and try again', 401
+	with Db() as db:
+		db.remove_whitelist(int(ban_id))
+	return ''
 
 @app.route('/admin/silent_remove/<int:ban_id>/<csrf>')
 @auth_required

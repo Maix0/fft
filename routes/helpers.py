@@ -41,8 +41,10 @@ def auth_required(function):
 			return resp
 		if db.is_banned(userid['userid']):
 			return f"You are banned from this website.", 403
-		details = db.get_user_by_id(userid['userid'])
 		is_admin = db.is_admin(userid['userid'])
+		if (not db.is_whitelisted(userid['userid'])) and (not is_admin):
+			return f"You are not whitelist from this website.", 403
+		details = db.get_user_by_id(userid['userid'])
 		theme = db.get_theme(userid['userid'])
 		msg_unread = db.number_of_unread_msg(userid['userid'])
 		db.close()
