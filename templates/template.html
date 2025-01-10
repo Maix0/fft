@@ -26,15 +26,6 @@
 			FFT<span class="text-muted text-beta">{{ 'kiosk!' if kiosk else '' }}</span>
 		</a>
 		{%- if not kiosk %}
-			<button class="btn btn-sm btn-messages me-2 ms-0 position-relative" id="read-msg-btn" onclick="location.href = '/messages/';">
-				<i class="fa-solid fa-envelope"></i>
-				{% if g.msg_count and g.msg_count >= 1 and hide_msg != True %}
-					<span id="unread-msg-number" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
-						{{ g.msg_count }}
-					</span>
-				{% endif %}
-			</button>
-
 			<button class="btn btn-secondary hide-navbar" hidden id="qc-friends">
 				<i class="fa-solid fa-user-group"></i>
 			</button>
@@ -56,19 +47,18 @@
 						<a class="nav-link active" aria-current="page" href="/friends/">Amis</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="/mates/">Projets</a>
-					</li>
-					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/xp/">XP</a>
 					</li>
+					{%- if is_admin %}
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/admin/">Admin</a>
+					</li>
+					{%- endif %}
 				{%- endif %}
 			</ul>
 			<div class="d-flex" role="search">
 				{%- if not kiosk %}
-					<button type="button" class="btn btn-outline-primary me-1" onclick="newTab('https://discord.gg/E8jbpgxz2s');" aria-label="Discord">
-						<i class="fa-brands fa-discord"></i> <i hidden class="spinner-border spinner-border-sm"></i>
-					</button>
-					<button type="button" class="btn btn-outline-secondary me-1" onclick="newTab('https://github.com/wow0000/friends42');" aria-label="Github">
+					<button type="button" class="btn btn-outline-secondary me-1" onclick="newTab('https://github.com/maix0/fft');" aria-label="Github">
 						<i class="fa-brands fa-github"></i> <i hidden class="spinner-border spinner-border-sm"></i>
 					</button>
 					<input class="form-control" list="global_suggestions" id="globalSearch" type="search" placeholder="Rechercher..." aria-label="Search">

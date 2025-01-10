@@ -256,7 +256,8 @@
               bocalToken = "bocal";
               updateToken = "update";
               envFile = "/etc/envfile";
-              domain = "f.maix.me";
+              domain = "fft.maix.me";
+              port = 80;
             };
           })
           ({
@@ -305,7 +306,7 @@
                 isNormalUser = true;
                 home = "/home/nixos";
               };
-              networking.hosts = {"127.0.0.1" = ["f.maix.me"];};
+              networking.hosts = {"127.0.0.1" = ["fft.maix.me"];};
               services.xserver = {
                 enable = true;
                 displayManager.gdm.enable = true;
