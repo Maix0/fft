@@ -20,6 +20,11 @@ def admin(userid):
 		whitelist = db.get_all_whitelist()
 	return render_template('admin.html', user=userid, shadow_bans=shadow_bans, piscines=piscines, silents=silents, whitelist=whitelist)
 
+@app.route('/admin/')
+@auth_required
+def admin(userid):
+    return redirect('/admin', 307)
+
 @app.route('/admin/whitelist_add', methods=['POST'])
 @auth_required
 def insert_whilelist(userid):

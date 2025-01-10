@@ -30,7 +30,7 @@ def profile(login, userid):
 	else:
 		user["last_active"] = ""
 	return render_template('profile.html', user=user, is_friend=is_friend, userid=userid, is_banned=is_banned,
-	                       theme=theme)
+	                       theme=theme, is_admin=userid["admin"])
 
 
 @app.route('/settings/', methods=['GET', 'POST'])
@@ -48,7 +48,7 @@ def settings(userid):
 	if campus_id in maps.available:
 		kiosk_buildings = maps.available[campus_id].map['buildings']
 	return render_template('settings.html', user=user, notif=notif, theme=theme, cookies=cookies,
-	                       kiosk_buildings=kiosk_buildings, domain=config.domain)
+	                       kiosk_buildings=kiosk_buildings, domain=config.domain, is_admin=userid["admin"])
 
 
 @app.route('/')
@@ -138,7 +138,7 @@ def friends_route(userid):
 	friend_list = sorted(friend_list, key=lambda d: d['name'])
 	friend_list = sorted(friend_list, key=lambda d: 0 if d['relation'] == 1 else 1)
 	friend_list = sorted(friend_list, key=lambda d: 0 if d['position'] else 1)
-	return render_template('friends.html', friends=friend_list, theme=theme)
+	return render_template('friends.html', friends=friend_list, theme=theme, is_admin=userid["admin"])
 
 
 @app.route('/search/<keyword>/<int:friends_only>')
