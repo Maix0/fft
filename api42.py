@@ -54,7 +54,7 @@ class Api:
 				"client_secret": self.secret,
 				"code": token,
 				"state": state,
-				"redirect_uri": "http://localhost:8888/auth"
+				"redirect_uri": config.redirect_url.replace('{current_domain}', domain)
 			})
 		except Exception as e:
 			print("get_access_token: ",e)
@@ -63,14 +63,6 @@ class Api:
 			print("get_access_token: ",r.text)
 			return ""
 		return r.json()["access_token"]
-	
-	def get_user_id_by_login(self, login: str):
-		self.add_rate()
-		data, status, headers = self.get(f"/campus/1/users",
-								   			  [f"filter[login]={login}",])
-		if status == 200:
-			return data[0]["id"]
-		return 0
 
 	def get_token_info(self, token: str):
 		self.add_rate()
