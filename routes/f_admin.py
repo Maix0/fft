@@ -22,7 +22,7 @@ def admin(userid):
 
 @app.route('/admin/')
 @auth_required
-def admin(userid):
+def admin_redirect(userid):
     return redirect('/admin', 307)
 
 @app.route('/admin/whitelist_add', methods=['POST'])
