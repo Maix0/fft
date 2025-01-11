@@ -43,12 +43,10 @@ div.scroll {
 
 .whitelist {
 	background-color: #0099ff !important;
-	filter: drop-shadow(0 0 0.75rem #8e44ad) !important;
 }
 
 .friend {
 	background-color: #27ae50 !important;
-	/*filter: drop-shadow(0 0 0.75rem #27ae50) !important;*/
 }
 
 .close_friend {
@@ -57,7 +55,6 @@ div.scroll {
 }
 
 .admin {
-	/* background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet, red) !important; */
 	animation: admin 20s infinite;
 	filter: drop-shadow(0 0 0.75rem #8e44ad) !important;
 }
@@ -75,7 +72,7 @@ div.scroll {
 /* small */
 @media screen and (max-width: 800px) {
 	.small-colors {
-		background-color: #2C2F33 !important;
+		background-color: #2c2f33 !important;
 	}
 }
 
@@ -103,7 +100,6 @@ div.scroll {
 		border-collapse: collapse;
 		border: 4px solid var(--bs-body-bg);
 	}
-
 }
 
 .case {
@@ -111,20 +107,19 @@ div.scroll {
 }
 
 .dead {
-	color: #FF1744;
+	color: #ff1744;
 }
 
 .attention {
-	color: #FFD54F;
+	color: #ffd54f;
 }
 
 .pooled {
 	background-color: #d35400 !important;
-	/*filter: drop-shadow(0 0 0.75rem #d35400) !important;*/
 }
 
 .no-shadow {
-	filter: none!important;
+	filter: none !important;
 }
 
 .zindex9999 {
@@ -132,11 +127,32 @@ div.scroll {
 }
 
 @keyframes admin {
-	0.00% { background-color: red;    }
-   16.67% { background-color: orange; }
-   33.33% { background-color: yellow; }
-   50.00% { background-color: green;  }
-   66.67% { background-color: blue;   }
-   83.33% { background-color: indigo; }
-  100.00% { background-color: violet; }
+	0.00% {
+		background-color: red;
+		filter: drop-shadow(0 0 0.75rem red) !important;
+	}
+	16.67% {
+		background-color: orange;
+		filter: drop-shadow(0 0 0.75rem orange) !important;
+	}
+	33.33% {
+		background-color: yellow;
+		filter: drop-shadow(0 0 0.75rem yellow) !important;
+	}
+	50.00% {
+		background-color: green;
+		filter: drop-shadow(0 0 0.75rem green) !important;
+	}
+	66.67% {
+		background-color: blue;
+		filter: drop-shadow(0 0 0.75rem blue) !important;
+	}
+	83.33% {
+		background-color: indigo;
+		filter: drop-shadow(0 0 0.75rem indigo) !important;
+	}
+	100.00% {
+		background-color: violet;
+		filter: drop-shadow(0 0 0.75rem violet) !important;
+	}
 }

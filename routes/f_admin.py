@@ -18,7 +18,8 @@ def admin(userid):
 		piscines = db.get_all_piscines()
 		silents = db.get_all_silents()
 		whitelist = db.get_all_whitelist()
-	return render_template('admin.html', user=userid, shadow_bans=shadow_bans, piscines=piscines, silents=silents, whitelist=whitelist)
+		admin = db.get_all_admins()
+	return render_template('admin.html', user=userid, shadow_bans=shadow_bans, piscines=piscines, silents=silents, whitelist=whitelist, admins=admin)
 
 @app.route('/admin/')
 @auth_required
