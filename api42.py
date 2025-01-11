@@ -73,7 +73,8 @@ class Api:
         self.add_rate()
         data, status, headers = self.get("/campus/1/users", [f"filter[login]={login}"])
         if status == 200:
-            return data[0]["id"]
+            if (len(data)):
+                return data[0]["id"]
         return 0
 
     def get_token_info(self, token: str):

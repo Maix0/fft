@@ -493,9 +493,21 @@ class Db:
             return False
         return res
 
-    def get_tag(self, user_id: int):
+    def get_admin_tag(self, user_id: int):
         req = self.cur.execute(
             "SELECT tag FROM PERMISSIONS WHERE user_id = ?", [user_id]
+        )
+        return req.fetchall()
+    
+    def get_tag(self, user_id: int):
+        req = self.cur.execute(
+            "SELECT tag FROM USERS WHERE id = ?", [user_id]
+        )
+        return req.fetchall()
+    
+    def set_tag(self, user_id: int, tag: str):
+        req = self.cur.execute(
+            "UPDATE USERS SET tag= ? WHERE id = ?", [tag, user_id]
         )
         return req.fetchall()
 

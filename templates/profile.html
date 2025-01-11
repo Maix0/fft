@@ -21,7 +21,8 @@
 					     alt="{{ user.name }}'s pic">
 					<div class="display-inline-grid ms-3">
 						<h1 class="display-5 fw-bold">
-							<span class="badge badge-sm align-vertical bg-danger">{{ user.tag | safe }}</span>
+							<span class="badge badge-sm align-vertical bg-info text-dark">{{ user.tag | safe }}</span>
+							<span class="badge badge-sm align-vertical bg-danger">{{ user.admintag | safe }}</span>
 							{{ user.name }}
 							{% if 'None' not in user.pool %}
 								<span class="fs-6 text-muted ">Piscine de {{ user.pool }}</span>

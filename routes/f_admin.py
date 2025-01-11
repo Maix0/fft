@@ -23,6 +23,11 @@ def admin(userid):
         silents = db.get_all_silents()
         whitelist = db.get_all_whitelist()
         admin = db.get_all_admins()
+        tag = db.get_tag(user_id=userid["userid"])
+        if len(tag):
+            userid.update({"tag": db.get_tag(user_id=userid["userid"])[0]["tag"]})
+        else:
+            userid.update({"tag": ""})
     return render_template(
         "admin.html",
         user=userid,
@@ -93,6 +98,17 @@ def remove_tutor_station(ban_id, csrf, userid):
         db.remove_tutor_station(int(ban_id))
     return ""
 
+@app.route("/admin/settag", methods=["POST"])
+@auth_required
+def settag(userid):
+    if not userid["admin"] or userid["admin"]["level"] < 1:
+        return "Not authorized", 401
+    if not verify_csrf(request.form["csrf"]):
+        return "Please refresh and try again", 401
+    with Db() as db:
+        id = api.get_user_id_by_login(login=request.form["login"])
+        db.set_tag(user_id=id, tag=request.form["tag"])
+    return ""
 
 @app.route("/admin/piscine_add", methods=["POST"])
 @auth_required

@@ -30,11 +30,13 @@ def profile(login, userid):
         is_banned = db.is_banned(user["id"])
         theme = db.get_theme(userid["userid"])
         hide = is_shadow_banned(user["id"], userid["userid"], db)
-        tag = db.get_tag(user_id=user["id"])
+        tag = db.get_admin_tag(user_id=user["id"])
         if len(tag):
-            user.update({"tag": db.get_tag(user_id=user["id"])[0]["tag"]})
+            user.update({"admintag": db.get_admin_tag(user_id=user["id"])[0]["tag"]})
         else:
-            user.update({"tag": ""})
+            user.update({"admintag": ""})
+        if user["tag"] is None:
+            user["tag"] = ""
     if user is None:
         return "", 404
     if hide:
