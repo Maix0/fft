@@ -18,6 +18,11 @@ def profile(login, userid):
 		is_banned = db.is_banned(user['id'])
 		theme = db.get_theme(userid['userid'])
 		hide = is_shadow_banned(user['id'], userid['userid'], db)
+		tag = db.get_tag(user_id=user['id'])
+		if (len(tag)):
+			user.update({"tag": db.get_tag(user_id=user['id'])[0]['tag']})
+		else :
+			user.update({"tag": ""})
 	if user is None:
 		return "", 404
 	if hide:
@@ -31,7 +36,6 @@ def profile(login, userid):
 		user["last_active"] = ""
 	return render_template('profile.html', user=user, is_friend=is_friend, userid=userid, is_banned=is_banned,
 	                       theme=theme, is_admin=userid["admin"])
-
 
 @app.route('/settings/', methods=['GET', 'POST'])
 @auth_required
@@ -61,6 +65,15 @@ def index(userid):
 		return render_template('campus_refresh.html', campus_id=campus_id)
 	friends = db.get_friends(userid['userid'])
 	issues = db.get_issues()
+	admins = db.get_all_admins()
+	whitelists = db.get_all_whitelist()
+	admin_ids = set()
+	whitelist_ids = set()
+	for admin in admins:
+		admin_ids.add(admin["user_id"])
+	for user in whitelists:
+		whitelist_ids.add(user["user_id"])
+	print(f"{admins=}")
 	me = db.get_user_profile_id(userid['userid'])
 	theme = db.get_theme(userid['userid'])
 	shadow_bans = db.get_shadow_bans(userid['userid'])
@@ -87,11 +100,15 @@ def index(userid):
 		friend = user_id in [e['has'] for e in friends]
 		if friend:
 			close_friend = user_id in [e['has'] for e in friends if e['relation'] == 1]
+		admin = user_id in admin_ids
+		whitelist = user_id in whitelist_ids
 		location_map[user['host']] = {
 			**user,
 			"me": user_id == userid['userid'],
 			"friend": friend,
 			"close_friend": close_friend,
+			"admin": admin,
+			"whitelist": whitelist,
 			"pool": False
 		}
 		if me and 'pool' in me:

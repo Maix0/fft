@@ -93,6 +93,8 @@
 								{%- set relation = 'focus' -%}
 							{%- elif y in locations and locations[y]['me'] -%}
 								{%- set relation = 'me' -%}
+							{%- elif y in locations and locations[y]['whitelist'] -%}
+								{%- set relation = 'whitelist' -%}
 							{%- elif y in locations and locations[y]['close_friend'] -%}
 								{%- set relation = 'close_friend' -%}
 							{%- elif y in locations and locations[y]['friend'] -%}
@@ -103,6 +105,9 @@
 								{%- set relation = 'attention' -%}
 							{%- elif y in locations and locations[y]['pool'] and actual_cluster not in piscine -%}
 								{%- set relation = 'pooled' -%}
+							{%- endif -%}
+							{%- if y in locations and locations[y]['admin'] -%}
+								{%- set relation = 'admin' -%}
 							{%- endif -%}
 							{%- if countB.value % 2 == 0 -%}
 								<td data-pos="{{ y }}"

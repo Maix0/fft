@@ -41,6 +41,11 @@ div.scroll {
 	display: block;
 }
 
+.whitelist {
+	background-color: #0099ff !important;
+	filter: drop-shadow(0 0 0.75rem #8e44ad) !important;
+}
+
 .friend {
 	background-color: #27ae50 !important;
 	/*filter: drop-shadow(0 0 0.75rem #27ae50) !important;*/
@@ -48,6 +53,12 @@ div.scroll {
 
 .close_friend {
 	background-color: #8e44ad !important;
+	filter: drop-shadow(0 0 0.75rem #8e44ad) !important;
+}
+
+.admin {
+	/* background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet, red) !important; */
+	animation: admin 20s infinite;
 	filter: drop-shadow(0 0 0.75rem #8e44ad) !important;
 }
 
@@ -118,4 +129,14 @@ div.scroll {
 
 .zindex9999 {
 	z-index: 9999;
+}
+
+@keyframes admin {
+	0.00% { background-color: red;    }
+   16.67% { background-color: orange; }
+   33.33% { background-color: yellow; }
+   50.00% { background-color: green;  }
+   66.67% { background-color: blue;   }
+   83.33% { background-color: indigo; }
+  100.00% { background-color: violet; }
 }
