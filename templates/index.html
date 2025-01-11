@@ -104,6 +104,9 @@
 							{%- elif y in locations and locations[y]['pool'] and actual_cluster not in piscine -%}
 								{%- set relation = 'pooled' -%}
 							{%- endif -%}
+							{%- if y in locations and locations[y]['admin'] -%}
+								{%- set relation = 'admin' -%}
+							{%- endif -%}
 							{%- if countB.value % 2 == 0 -%}
 								<td data-pos="{{ y }}"
 								    data-login="{{ locations[y]['user']['login'] if y in locations else '' }}"

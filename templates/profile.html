@@ -1,5 +1,14 @@
 {% extends 'template.html' %}
 {% block css %}
+	<style>
+		.align-vertical {
+			vertical-align: middle;
+		}
+
+		.badge-sm {
+			font-size: 1rem;
+		}
+	</style>
 	<link href="/static/css/friends.css?v={{ version }}" rel="stylesheet">
 	<link href="/static/css/profile.css?v={{ version }}" rel="stylesheet">
 {% endblock %}
@@ -12,6 +21,7 @@
 					     alt="{{ user.name }}'s pic">
 					<div class="display-inline-grid ms-3">
 						<h1 class="display-5 fw-bold">
+							<span class="badge badge-sm align-vertical bg-danger">{{ user.tag | safe }}</span>
 							{{ user.name }}
 							{% if 'None' not in user.pool %}
 								<span class="fs-6 text-muted ">Piscine de {{ user.pool }}</span>
@@ -46,7 +56,6 @@
 								<i class="fa-solid fa-circle-info"></i>
 								Profil intra de {{ user.name }}
 							</button>
-
 						</span>
 					</div>
 				</div>

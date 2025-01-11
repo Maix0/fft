@@ -1,3 +1,6 @@
+import dotenv
+
+dotenv.load_dotenv()
 import requests
 import time
 import config
