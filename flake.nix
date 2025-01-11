@@ -164,7 +164,6 @@
               };
             in {
               containers.fft = {
-                system.stateVersion = "24.11";
                 privateNetwork = false; # TODO: maybe change it ?
                 bindMounts = {
                   "/env" = {
@@ -179,6 +178,7 @@
                 autoStart = true;
                 hostAddress = "192.168.100.2";
                 config = {
+                  system.stateVersion = "24.11";
                   networking.firewall.allowedTCPPorts = [cfg.port];
                   system.activationScripts.fft = lib.stringAfter ["var"] ''
                     mkdir -p /var/lib/fft
