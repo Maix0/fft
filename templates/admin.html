@@ -221,16 +221,6 @@
 
 {% block scripts %}
 	<script>
-		function del_ban(ban_id) {
-			fetch(`/admin/shadow_remove/${ban_id}/{{ create_csrf() }}`).then(async response => {
-				triggerToast(await response.text(), response.status === 200);
-				location.reload()No2jRDyIJ4_Mc33NLYQS6womJ58:772c62927dfb27ac4db3dda0f6f7e8fdd01f4f980df7c4f4b5b6d219a6e31e3f
-			}).catch(error => {
-				triggerToast(`Une erreur s'est produite (${error.status})`, false);
-				console.log(error)
-			});
-		}
-
 		function del_whitelist(user_id) {
 			fetch(`/admin/whitelist_remove/${user_id}/{{ create_csrf() }}`).then(async response => {
 				triggerToast(await response.text(), response.status === 200);
