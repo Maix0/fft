@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS USERS
 	pool         VARCHAR(100),
 	lang         VARCHAR(3) DEFAULT 'fr',
 	active       TIMESTAMP  DEFAULT 0,
-	tag			 TEXT,
-	campus       INTEGER    DEFAULT 1
+	campus       INTEGER    DEFAULT 1,
+	tag          TEXT       DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS COOKIES

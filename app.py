@@ -1,11 +1,7 @@
-import dotenv
-
-dotenv.load_dotenv()
 from flask import Flask, g
 from maps.maps import place_to_btn, percent_to_btn
 from db import Db
 import os
-import sentry_sdk
 import config
 import routes.finder
 import importlib
