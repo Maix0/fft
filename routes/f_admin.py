@@ -25,7 +25,10 @@ def admin(userid):
         admin = db.get_all_admins()
         tag = db.get_tag(user_id=userid["userid"])
         if len(tag):
-            userid.update({"tag": db.get_tag(user_id=userid["userid"])[0]["tag"]})
+            if db.get_tag(user_id=userid["userid"])[0]["tag"]:
+                userid.update({"tag": db.get_tag(user_id=userid["userid"])[0]["tag"]})
+            else :
+                userid.update({"tag": ""})
         else:
             userid.update({"tag": ""})
     return render_template(
