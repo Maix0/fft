@@ -56,7 +56,6 @@ div.scroll {
 
 .admin {
 	animation: admin 20s infinite;
-	filter: drop-shadow(0 0 0.75rem #8e44ad) !important;
 }
 
 .focus {
@@ -129,30 +128,23 @@ div.scroll {
 @keyframes admin {
 	0.00% {
 		background-color: red;
-		filter: drop-shadow(0 0 0.75rem red) !important;
 	}
 	16.67% {
 		background-color: orange;
-		filter: drop-shadow(0 0 0.75rem orange) !important;
 	}
 	33.33% {
 		background-color: yellow;
-		filter: drop-shadow(0 0 0.75rem yellow) !important;
 	}
 	50.00% {
 		background-color: green;
-		filter: drop-shadow(0 0 0.75rem green) !important;
 	}
 	66.67% {
 		background-color: blue;
-		filter: drop-shadow(0 0 0.75rem blue) !important;
 	}
 	83.33% {
 		background-color: indigo;
-		filter: drop-shadow(0 0 0.75rem indigo) !important;
 	}
 	100.00% {
 		background-color: violet;
-		filter: drop-shadow(0 0 0.75rem violet) !important;
 	}
 }

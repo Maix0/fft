@@ -43,7 +43,7 @@
 	<div class="modal fade" id="addWhitelistModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="addwhitelist">
+				<form method="POST" id="CreateWhitelist">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Ajouter une personne sur la Whitelist</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -111,10 +111,7 @@
 		</form>
 	</div>
 	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary">
-		<h4>Admin
-			<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addWhitelistModal">+
-			</button>
-		</h4>
+		<h4>Admin</h4>
 		<table class="table">
 			<thead>
 			<tr>
@@ -227,7 +224,7 @@
 		function del_ban(ban_id) {
 			fetch(`/admin/shadow_remove/${ban_id}/{{ create_csrf() }}`).then(async response => {
 				triggerToast(await response.text(), response.status === 200);
-				location.reload()
+				location.reload()No2jRDyIJ4_Mc33NLYQS6womJ58:772c62927dfb27ac4db3dda0f6f7e8fdd01f4f980df7c4f4b5b6d219a6e31e3f
 			}).catch(error => {
 				triggerToast(`Une erreur s'est produite (${error.status})`, false);
 				console.log(error)
@@ -308,7 +305,7 @@
 			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
 		});
 
-		document.getElementById('addwhitelist').addEventListener('submit', function (event) {
+		document.getElementById('CreateWhitelist').addEventListener('submit', function (event) {
 			event.preventDefault();
 
 			const formData = new FormData(event.target);
