@@ -50,7 +50,6 @@ def settings(userid):
 	return render_template('settings.html', user=user, notif=notif, theme=theme, cookies=cookies,
 	                       kiosk_buildings=kiosk_buildings, domain=config.domain, is_admin=userid["admin"])
 
-
 @app.route('/')
 @auth_required
 def index(userid):
