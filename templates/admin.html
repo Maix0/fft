@@ -261,21 +261,6 @@
 			});
 		}
 
-
-		document.getElementById('createShadowBan').addEventListener('submit', function (event) {
-			event.preventDefault();
-
-			const formData = new FormData(event.target);
-
-			fetch('/admin/shadow_ban', {
-				method: 'POST',
-				body: formData
-			}).then(async response => {
-				triggerToast(await response.text(), response.status === 200);
-				location.reload();
-			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
-		});
-
 		document.getElementById('changetag').addEventListener('submit', function (event) {
 			event.preventDefault();
 

@@ -30,7 +30,7 @@ def admin(userid):
         silents=silents,
         whitelist=whitelist,
         admins=admin,
-        is_admin=true,
+        is_admin=True,
     )
 
 
