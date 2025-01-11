@@ -41,6 +41,11 @@ div.scroll {
 	display: block;
 }
 
+.whitelist {
+	background-color: #0099ff !important;
+	filter: drop-shadow(0 0 0.75rem #8e44ad) !important;
+}
+
 .friend {
 	background-color: #27ae50 !important;
 	/*filter: drop-shadow(0 0 0.75rem #27ae50) !important;*/

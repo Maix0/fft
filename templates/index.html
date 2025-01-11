@@ -93,6 +93,8 @@
 								{%- set relation = 'focus' -%}
 							{%- elif y in locations and locations[y]['me'] -%}
 								{%- set relation = 'me' -%}
+							{%- elif y in locations and locations[y]['whitelist'] -%}
+								{%- set relation = 'whitelist' -%}
 							{%- elif y in locations and locations[y]['close_friend'] -%}
 								{%- set relation = 'close_friend' -%}
 							{%- elif y in locations and locations[y]['friend'] -%}
