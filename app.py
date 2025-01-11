@@ -8,20 +8,13 @@ import routes.finder
 import importlib
 import routes.helpers
 
-if config.sentry and config.sentry != '':
-	sentry_sdk.init(
-		dsn=config.sentry,
-		traces_sample_rate=config.sentry_traces_sample_rate,
-		profiles_sample_rate=config.sentry_profiles_sample_rate
-	)
-
 db = Db(config.db_path)
 db.initialize()
 
 app = Flask(__name__)
 
 for route in routes.finder.get_all_routes():
-	app.register_blueprint(importlib.import_module('routes.' + route, package=None).app)
+    app.register_blueprint(importlib.import_module("routes." + route, package=None).app)
 
 app.jinja_env.globals.update(len=len)
 app.jinja_env.globals.update(enumerate=enumerate)
@@ -37,5 +30,5 @@ app.jinja_env.globals.update(int=int)
 
 routes.helpers.create_hooks(app)
 
-if __name__ == '__main__':
-	app.run(debug=False, host='0.0.0.0', port=int(os.environ.get("F42_PORT")))
+if __name__ == "__main__":
+    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("F42_PORT")))

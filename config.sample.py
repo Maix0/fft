@@ -3,8 +3,8 @@ update_key = "changeme"
 secret = "s-s4t2ud-"
 key = "u-s4t2ud-"
 bocal_token = "changeme"
-telegram_token = ''
-sentry = ''
+telegram_token = ""
+sentry = ""
 
 # Configuration
 redirect_url = "http://{current_domain}/auth"

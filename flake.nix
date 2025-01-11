@@ -24,6 +24,8 @@
                 arrow
                 sentry-sdk
               ]))
+          pkgs.black
+          pkgs.ruff
         ];
       };
       packages = rec {
@@ -162,6 +164,7 @@
               };
             in {
               containers.fft = {
+                system.stateVersion = "24.11";
                 privateNetwork = false; # TODO: maybe change it ?
                 bindMounts = {
                   "/env" = {

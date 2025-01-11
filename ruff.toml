@@ -1,0 +1,3 @@
+[lint]
+# E722: bare except
+ignore = ["E722"]

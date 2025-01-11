@@ -87,7 +87,14 @@
 						{%- elif exrypz(y) == False -%}
 							<td class="small-colors"></td>
 						{%- else -%}
-							{%- set img = '<i class="fa-solid fa-user"></i>' if y not in locations else '<img loading="lazy" class="profile-pic2" alt="" src="' + proxy_images(locations[y]['user']['image']['versions']['small']) + '">' -%}
+
+							{%- set img = '<i class="fa-solid fa-user"></i>' -%}
+							{%- if y in locations -%}
+								{%- set img = '<img loading="lazy" class="profile-pic2" alt="" src="' + proxy_images(locations[y]['user']['image']['versions']['small']) + '">' -%}
+							{%- elif y in tutor_station -%}
+								{%- set img = '<i class="fa-solid fa-shield"></i>' -%}
+							{%- endif -%}
+
 							{%- set relation = '' -%}
 							{%- if focus and focus == y %}
 								{%- set relation = 'focus' -%}
@@ -103,12 +110,14 @@
 								{%- set relation = 'dead' -%}
 							{%- elif y in issues_map and issues_map[y]['count'] >= 1 and issues_map[y]['issue'] == 2 -%}
 								{%- set relation = 'attention' -%}
+
 							{%- elif y in locations and locations[y]['pool'] and actual_cluster not in piscine -%}
 								{%- set relation = 'pooled' -%}
 							{%- endif -%}
 							{%- if y in locations and locations[y]['admin'] -%}
 								{%- set relation = 'admin' -%}
 							{%- endif -%}
+
 							{%- if countB.value % 2 == 0 -%}
 								<td data-pos="{{ y }}"
 								    data-login="{{ locations[y]['user']['login'] if y in locations else '' }}"

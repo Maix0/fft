@@ -1,12 +1,10 @@
 import os
+
 # Secrets
 secret = os.environ.get("F42_CLIENT_SECRET")
-key = os.environ.get("F42_CLIENT_ID") 
+key = os.environ.get("F42_CLIENT_ID")
 bocal_token = os.environ.get("F42_BOCAL_KEY")
 update_key = os.environ.get("F42_UPDATE_KEY")
-telegram_token = ""
-sentry = ""
-
 
 # Configuration
 db_path = os.environ.get("F42_DB", default="database.db")
