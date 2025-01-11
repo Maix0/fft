@@ -150,7 +150,9 @@ def change_tag(userid):
     if not verify_csrf(request.form["csrf"]):
         return "Please refresh and try again", 401
     user_to_change = (
-        request.form["user_id"] if request.form.get("user_id", None) else userid["userid"]
+        request.form["user_id"]
+        if request.form.get("user_id", None)
+        else userid["userid"]
     )
     with Db() as db:
         db.admin_change_tag(user_to_change, request.form["tag"])

@@ -108,7 +108,11 @@ def index(userid):
     shadow_bans = db.get_shadow_bans(userid["userid"])
     piscines = [x["cluster"] for x in db.get_piscines(userid["campus"])]
     silents = [x["cluster"] for x in db.get_silents(userid["campus"])]
-    tutor_stations = [ x["station"] for x in db.get_all_tutor_stations() if x["campus"] == userid["campus"]]
+    tutor_stations = [
+        x["station"]
+        for x in db.get_all_tutor_stations()
+        if x["campus"] == userid["campus"]
+    ]
     db.close()
     campus_map = maps.available[campus_id].map
     if pos and campus_map["exrypz"](pos) is bool:
