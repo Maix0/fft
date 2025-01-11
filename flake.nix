@@ -27,17 +27,17 @@
         ];
       };
       packages = rec {
-        default = friends42;
-        friends42 = with pkgs.python3.pkgs;
+        default = fft;
+        fft = with pkgs.python3.pkgs;
           pkgs.stdenvNoCC.mkDerivation {
-            name = "friends42";
+            name = "fft";
             src = ./.;
             installPhase = ''
               mkdir -p $out/opt
               cp -farT . $out/opt
 
               mkdir -p $out/bin
-              cat <<EOF >$out/bin/friends42
+              cat <<EOF >$out/bin/fft
               #!/bin/sh
               cd $out/opt
               exec ${python.withPackages (pypkgs:
@@ -49,7 +49,7 @@
                   sentry-sdk
                 ])}/bin/python ./app.py
               EOF
-              chmod +x $out/bin/friends42
+              chmod +x $out/bin/fft
             '';
           };
         updater = with pkgs.python3.pkgs;
@@ -87,18 +87,18 @@
           ...
         }:
           with lib; let
-            cfg = config.services.friends42;
+            cfg = config.services.fft;
           in {
-            options.services.friends42 = {
+            options.services.fft = {
               package = mkOption {
                 type = types.package;
-                default = self.packages.${pkgs.system}.friends42;
+                default = self.packages.${pkgs.system}.fft;
               };
               updaterPackage = mkOption {
                 type = types.package;
                 default = self.packages.${pkgs.system}.updater;
               };
-              enable = mkEnableOption "friends42";
+              enable = mkEnableOption "fft";
               port = mkOption {
                 type = types.port;
                 default = 10000;
@@ -129,7 +129,7 @@
               dbPath = mkOption {
                 type = types.path;
                 description = "database Path";
-                default = "/var/lib/friends42/database.db";
+                default = "/var/lib/fft/database.db";
               };
               domain = mkOption {
                 type = types.str;
@@ -154,14 +154,14 @@
                   F42_DOMAIN = cfg.domain;
                 };
                 serviceConfig = {
-                  User = "friends42";
+                  User = "fft";
                   Group = "nobody";
                   EnvironmentFile = "/env";
-                  ExecStart = "${cfg.package}/bin/friends42";
+                  ExecStart = "${cfg.package}/bin/fft";
                 };
               };
             in {
-              containers.friends42 = {
+              containers.fft = {
                 privateNetwork = false; # TODO: maybe change it ?
                 bindMounts = {
                   "/env" = {
@@ -177,18 +177,18 @@
                 hostAddress = "192.168.100.2";
                 config = {
                   networking.firewall.allowedTCPPorts = [cfg.port];
-                  system.activationScripts.friends42 = lib.stringAfter ["var"] ''
-                    mkdir -p /var/lib/friends42
-                    chown friends42 /var/lib/friends42
+                  system.activationScripts.fft = lib.stringAfter ["var"] ''
+                    mkdir -p /var/lib/fft
+                    chown fft /var/lib/fft
                   '';
 
-                  users.users.friends42 = {
+                  users.users.fft = {
                     isSystemUser = true;
-                    group = "friends42";
+                    group = "fft";
                   };
-                  users.groups.friends42 = {};
-                  services.redis.servers.friends42 = {
-                    user = "friends42";
+                  users.groups.fft = {};
+                  services.redis.servers.fft = {
+                    user = "fft";
                     port = cfg.redisPort;
                     enable = true;
                   };
@@ -218,7 +218,7 @@
                   };
                   systemd.services =
                     {
-                      friends42-updater = {
+                      fft-updater = {
                         wantedBy = ["multi-user.target"];
                         requires = ["network.target"];
                         after = ["network.target"];
@@ -233,7 +233,7 @@
                           F42_DOMAIN = cfg.domain;
                         };
                         serviceConfig = {
-                          User = "friends42";
+                          User = "fft";
                           Group = "nobody";
                           EnvironmentFile = "/env";
                           ExecStart = "${getBin cfg.updaterPackage}/bin/updater";
@@ -242,7 +242,7 @@
                     }
                     // (listToAttrs (map
                       (idx: {
-                        name = "friends42-${toString idx}";
+                        name = "fft-${toString idx}";
                         value = mainSystemdUnit idx;
                       }) (lib.range 1 cfg.instanceCount)));
                 };
@@ -264,7 +264,7 @@
             networking.firewall.extraCommands = ''
               iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
             '';
-            services.friends42 = {
+            services.fft = {
               enable = true;
               bocalToken = "bocal";
               updateToken = "update";

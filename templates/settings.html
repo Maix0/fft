@@ -53,18 +53,6 @@
 					        data-category="sessions">
 						<i class="fa-solid fa-key"></i> Sessions
 					</button>
-					<button type="button" class="list-group-item settings-switcher list-group-item-action"
-					        data-category="kiosk">
-						<i class="fa-solid fa-info-circle"></i> Kiosk
-					</button>
-					<button type="button" class="list-group-item settings-switcher list-group-item-action"
-					        data-category="questions">
-						<i class="fa-solid fa-question-circle"></i> Questions
-					</button>
-					<button type="button" class="list-group-item settings-switcher list-group-item-action"
-					        data-category="changelog">
-						<i class="fa-solid fa-newspaper"></i> Changelog
-					</button>
 				</ul>
 			</div>
 			<div class="col-md-9">
@@ -109,42 +97,6 @@
 					</form>
 				</div>
 				<div hidden id="settings">
-					<!-- Telegram -->
-					<div class="card m-1">
-						<div class="card-body">
-							<h5 class="card-title"><i class="fa-solid fa-bell"></i> Notifications</h5>
-							{% if not notif %}
-                <a hidden id="redirect" href="{{ domain }}/settings/">
-                Cliquez-ici pour aller sur {{ domain }}
-								</a>
-								<script async src="https://telegram.org/js/telegram-widget.js?22"
-								        data-telegram-login="friends42bot"
-								        data-size="large" data-userpic="false" data-onauth="onTelegramAuth(user)"
-								        data-request-access="write"></script>
-							{% else %}
-								<p>
-									Compte lié avec l'id: <kbd>{{ notif.telegram_id }}</kbd><br>
-									Les notifications de connexions ne fonctionnent uniquement si vous êtes tous deux en
-									ami
-									proche. <i class="fa-solid fa-star text-warning"></i>
-								</p>
-								<div class="form-check mb-3">
-									<input class="form-check-input" {{ 'checked' if notif.enabled else '' }} type="checkbox" value="" id="tg-enabled">
-									<label class="form-check-label" for="tg-enabled">
-										Recevoir les notifications
-									</label>
-								</div>
-
-								<div class="mb-3">
-									<label for="tg-msg" class="form-label">Message à recevoir</label>
-									<input type="email" class="form-control" id="tg-msg" value="{{ notif.message if notif.message else '' }}" placeholder="🧑‍💻 |id| s'est connecté en |dump|">
-								</div>
-
-								<button class="btn btn-primary" onclick="tg_save();">Sauvegarder</button>
-								<button class="btn btn-danger" onclick="tg_unlink();">Délier le compte</button>
-							{% endif %}
-						</div>
-					</div>
 					<!-- Custom theme -->
 					<div class="card m-1">
 						<div class="card-body">
@@ -217,31 +169,6 @@
 
 {% block scripts %}
 	<script>
-		addEventListener("load", () => {
-    if (window.location.hostname !== "{{ domain }}") {
-				if (document.getElementById('redirect')) {
-					document.getElementById('redirect').hidden = false;
-					document.getElementById('telegram-login-friends42bot').hidden = true;
-				}
-			}
-		});
-
-		function onTelegramAuth(user) {
-			console.log(user)
-			fetch('/telegram/add/', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(user)
-			}).then(r => {
-				if (r.status === 200) {
-					triggerToast('Vos informations ont bien été mis à jour !', true);
-					setTimeout(() => {
-						location.reload()
-					}, 1500);
-				} else
-					triggerToast("Une erreur s'est produite.", false);
-			})
-		}
 
 		function reset_sessions() {
 			fetch('/sessions/reset').then(() => {
@@ -272,62 +199,6 @@
 				} else
 					triggerToast("Une erreur s'est produite", false);
 			})
-		}
-
-		function tg_save() {
-			let tgmsg = encodeURIComponent(document.getElementById('tg-msg').value || '');
-			let tg_enabled = document.getElementById('tg-enabled').checked ? '1' : '0';
-			if (tgmsg.length === 0)
-				tgmsg = 'NONONON';
-			fetch(`/telegram/set_status/${tg_enabled}/${tgmsg}`).then(req => {
-				if (req.status === 200) {
-					triggerToast('Vos paramètres ont bien été sauvegardés', true);
-				} else
-					triggerToast("Une erreur s'est produite", false);
-			})
-		}
-
-		function tg_unlink() {
-			fetch('/telegram/remove').then(req => {
-				if (req.status === 200) {
-					triggerToast('Votre compte à bien été délié', true);
-					setTimeout(() => {
-						location.reload()
-					}, 1500);
-				} else
-					triggerToast("Une erreur s'est produite", false);
-			})
-		}
-
-		function kiosk_save() {
-			let inactivity = document.getElementById('kiosk-inactivity').value;
-			let showtime = document.getElementById('kiosk-showtime').value;
-			let building = document.getElementById('kiosk-building').value;
-
-			localStorage.setItem("kiosk", JSON.stringify({
-				inactivity: parseInt(inactivity),
-				showtime: parseInt(showtime),
-				building: building
-			}))
-			triggerToast('Vos paramètres ont bien été sauvegardés', true);
-		}
-
-		function kiosk_open() {
-			location.replace('/iframe/' + document.getElementById('kiosk-building').value);
-		}
-
-		function kiosk_load() {
-			let func = (() => {
-				let kiosk = JSON.parse(localStorage.getItem("kiosk"));
-				if (kiosk) {
-					document.getElementById('kiosk-inactivity').value = kiosk.inactivity;
-					document.getElementById('kiosk-showtime').value = kiosk.showtime;
-					document.getElementById('kiosk-building').value = kiosk.building;
-					console.log(document.getElementById('kiosk-building').value)
-				}
-			});
-			func();
-			setTimeout(func, 50) // i hate chrome
 		}
 
 		let buttons = document.querySelectorAll(".settings-switcher")
@@ -388,10 +259,6 @@
 
 		biographyArea.addEventListener('input', () => {
 			bio_counter.innerText = biographyArea.value.length;
-		});
-
-		document.addEventListener('DOMContentLoaded', () => {
-			kiosk_load();
 		});
 	</script>
 {% endblock %}

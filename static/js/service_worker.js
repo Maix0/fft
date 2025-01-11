@@ -22,7 +22,7 @@ let g_temp = [
 self.addEventListener('install', function (e) {
 	/*
 	e.waitUntil(
-		caches.open('friends42').then(function (cache) {
+		caches.open('fft').then(function (cache) {
 			return cache.addAll([...g_temp, ...g_permanent]);
 		})
 	);

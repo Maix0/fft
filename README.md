@@ -10,7 +10,7 @@ You'll need the followings:
 * Telegram key [optional]
 
 ```bash
-git clone git@github.com:wow0000/friends42.git && cd friends42
+git clone git@github.com:Maix0/fft.git && cd fft
 pip install -r requirements.txt
 vim config.py
 python3 app.py
