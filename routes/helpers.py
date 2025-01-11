@@ -51,8 +51,10 @@ def auth_required(function):
             return "You are not whitelist from this website.", 403
         details = db.get_user_by_id(userid["userid"])
         theme = db.get_theme(userid["userid"])
+        tag = db.get_tag(userid["userid"])
         db.close()
         userid["admin"] = is_admin
+        userid["tag"] = tag["tag"]
         userid["campus"] = details["campus"]
         userid["login"] = details["name"]
         userid["image_medium"] = proxy_images(details["image_medium"])

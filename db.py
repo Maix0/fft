@@ -498,18 +498,6 @@ class Db:
             "SELECT tag FROM PERMISSIONS WHERE user_id = ?", [user_id]
         )
         return req.fetchall()
-    
-    def get_tag(self, user_id: int):
-        req = self.cur.execute(
-            "SELECT tag FROM USERS WHERE id = ?", [user_id]
-        )
-        return req.fetchall()
-    
-    def set_tag(self, user_id: int, tag: str):
-        req = self.cur.execute(
-            "UPDATE USERS SET tag= ? WHERE id = ?", [tag, user_id]
-        )
-        return req.fetchall()
 
     def admin_change_tag(self, user_id: int, tag: str):
         self.cur.execute(
@@ -526,6 +514,20 @@ class Db:
             "SELECT * FROM SPECIAL_USERS WHERE sp_send_key = ?", [key]
         )
         return req.fetchone()
+
+    def get_tag(self, user_id: int):
+        req = self.cur.execute("SELECT tag FROM USERS WHERE id = ?", [user_id])
+        return req.fetchone()
+
+    def set_tag(self, user_id: int, tag: str):
+        req = self.cur.execute("UPDATE USERS SET tag= ? WHERE id = ?", [tag, user_id])
+        return req.fetchall()
+
+    def get_all_tags(self):
+        req = self.cur.execute(
+            "SELECT id, name, tag FROM USERS WHERE tag IS NOT NULL", []
+        )
+        return req.fetchall()
 
     def get_special_user_by_id(self, sp_id: int):
         req = self.cur.execute("SELECT * FROM SPECIAL_USERS WHERE sp_id = ?", [sp_id])

@@ -66,7 +66,6 @@ def settings(userid):
     db = Db(config.db_path)
     login = db.get_user_by_id(userid["userid"])["name"]
     user = db.get_user_profile(login)
-    notif = db.has_notifications(userid["userid"])
     theme = db.get_theme(userid["userid"])
     cookies = db.get_user_cookies(userid["userid"])
     campus_id = db.get_user_by_id(userid["userid"])["campus"]
@@ -77,7 +76,6 @@ def settings(userid):
     return render_template(
         "settings.html",
         user=user,
-        notif=notif,
         theme=theme,
         cookies=cookies,
         kiosk_buildings=kiosk_buildings,
