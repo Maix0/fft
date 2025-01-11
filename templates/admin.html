@@ -21,10 +21,6 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-floating mb-3">
-							<input type="number" name="campus" class="form-control" id="input-campus" value="1" placeholder="">
-							<label for="input-campus">ID Campus</label>
-						</div>
-						<div class="form-floating mb-3">
 							<input type="text" name="tag" class="form-control" id="input-desc" placeholder="Lorem ipsum...">
 							<label for="input-desc">Tag</label>
 						</div>
@@ -177,7 +173,7 @@
 				<th scope="col">User ID</th>
 				<th scope="col">Level</th>
 				<th scope="col">Tag</th>
-        <th scope="col"> + </td>
+				<th scope="col"> + </td>
 			</tr>
 			</thead>
 			<tbody>
@@ -187,7 +183,7 @@
 					<td>{{ user.level }}</td>
 					<td>{{ user.tag }}</td>
 					<td>
-            <button class="btn btn-success btn-sm" onclick="openChangeTagFor({{ user.user_id }})">+</button>
+						<button class="btn btn-success btn-sm" onclick="openChangeTagFor({{ user.user_id }} , '{{ user.tag }}')">+</button>
 					</td>
 				</tr>
 			{% endfor %}
@@ -350,7 +346,7 @@
 			});
 		}
 		
-    function del_tutor_station(tutor_station_id) {
+		function del_tutor_station(tutor_station_id) {
 			fetch(`/admin/tutor_station_remove/${tutor_station_id}/{{ create_csrf() }}`).then(async response => {
 				triggerToast(await response.text(), response.status === 200);
 				location.reload()
@@ -374,12 +370,13 @@
 			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
 		});
 		
-		function openChangeTagFor(user_id)
+		function openChangeTagFor(user_id, current_tag)
 		{
 			let modalElem = document.querySelector("#ChangeTagModal");
 			if (!modalElem)
 				return ;
 			modalElem.querySelector("input[name='user_id']").value = user_id.toString();
+			modalElem.querySelector("input[name='tag']").value = current_tag;
 			let modal = new bootstrap.Modal(modalElem).show();
 		}
 
