@@ -191,10 +191,6 @@
 	</div>
 
 	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary">
-		<h4>Tag
-			<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#setTagModal">Set tag to user
-			</button>
-		</h4>
 		<form method="POST" id="changetagforme">
 			<div class="input-group mb-3">
 				<input type="text" name="tag" class="form-control" value='{{ user.admin.tag }}'>
@@ -211,7 +207,7 @@
 				<th scope="col">User ID</th>
 				<th scope="col">Level</th>
 				<th scope="col">Tag</th>
-				<th scope="col"> + </td>
+				<th scope="col">-</td>
 			</tr>
 			</thead>
 			<tbody>
@@ -221,7 +217,7 @@
 					<td>{{ user.level }}</td>
 					<td> <span class="badge badge-sm align-vertical bg-danger">{{ user.tag | safe }}</span> </td>
 					<td>
-						<button class="btn btn-success btn-sm" onclick="openChangeTagFor({{ user.user_id }} , '{{ user.tag }}')">+</button>
+						<button class="btn btn-info btn-sm" onclick="openChangeTagFor({{ user.user_id }} , '{{ user.tag }}')">Edit</button>
 					</td>
 				</tr>
 			{% endfor %}
@@ -269,7 +265,7 @@
 				<th scope="col">User ID</th>
 				<th scope="col">Login</th>
 				<th scope="col">Tag</th>
-				<th scope="col">+</th>
+				<th scope="col">-</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -279,7 +275,7 @@
 					<td> {{ user.name }}</td> 
 					<td> <span class="badge badge-sm align-vertical bg-info text-dark">{{ user.tag | safe }}</span> </td>
 					<td>
-						<button class="btn btn-success btn-sm" onclick="openChangeUserTagFor('{{ user.name }}', '{{ user.tag }}')">+</button>
+						<button class="btn btn-info btn-sm" onclick="openChangeUserTagFor('{{ user.name }}', '{{ user.tag }}')">Edit</button>
 					</td>
 				</tr>
 			{% endfor %}
