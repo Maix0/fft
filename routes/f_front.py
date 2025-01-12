@@ -212,6 +212,8 @@ def friends_route(userid):
                 friend["admin"]["tag"] = friend["admin"]["tag"][0]["tag"]
             # friend["admin"]["tag"] = db.get_admin_tag(friend["id"])
             friend["position"] = get_position(friend["name"])
+            if (friend["tag"] is None):
+                friend["tag"] = ""
             if friend["active"] and friend["position"] is None:
                 date = arrow.get(friend["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
                 friend["last_active"] = "depuis " + date.humanize(

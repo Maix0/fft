@@ -183,6 +183,8 @@ function openFriend(name, auto_reload = false) {
 				istag.hidden = !(data.tag !== false);
 				if(data.tag)
 					istag.innerHTML = data.tag;
+				else
+					istag.innerHTML = "";
 				if (send_msg) {
 					send_msg.onclick = () => {
 						document.getElementById("dest-login").value = name;
