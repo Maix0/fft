@@ -210,7 +210,6 @@ def friends_route(userid):
                 friend["admin"]["tag"] = ""
             else :
                 friend["admin"]["tag"] = friend["admin"]["tag"][0]["tag"]
-            # friend["admin"]["tag"] = db.get_admin_tag(friend["id"])
             friend["position"] = get_position(friend["name"])
             if (friend["tag"] is None):
                 friend["tag"] = ""
@@ -226,9 +225,39 @@ def friends_route(userid):
     friend_list = sorted(friend_list, key=lambda d: 0 if d["position"] else 1)
     db.close()
     return render_template(
-        "friends.html", friends=friend_list, theme=theme, is_admin=userid["admin"]
+        "friends.html", friends=friend_list, theme=theme, is_admin=userid["admin"], add=True
     )
 
+@app.route("/tutors/")
+@auth_required
+def tutors_route(userid):
+    db = Db(config.db_path)
+    theme = db.get_theme(userid["userid"])
+    tutor_list = db.get_all_tutors()
+    shadow_bans = db.get_shadow_bans(userid["userid"])
+    for tutor in tutor_list:
+        tutor.update({"has": 0})
+        tutor.update({"admin": {"tag": db.get_admin_tag(tutor["id"])}})
+        if len(tutor["admin"]["tag"]) == 0:
+            tutor["admin"]["tag"] = ""
+        else :
+            tutor["admin"]["tag"] = tutor["admin"]["tag"][0]["tag"]
+        tutor["position"] = get_position(tutor["name"])
+        if (tutor["tag"] is None):
+            tutor["tag"] = ""
+        if tutor["active"] and tutor["position"] is None:
+            date = arrow.get(tutor["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
+            tutor["last_active"] = "depuis " + date.humanize(
+                locale="FR", only_distance=True
+            )
+        else:
+            tutor["last_active"] = ""
+    tutor_list = sorted(tutor_list, key=lambda d: d["name"])
+    tutor_list = sorted(tutor_list, key=lambda d: 0 if d["position"] else 1)
+    db.close()
+    return render_template(
+        "friends.html", friends=tutor_list, theme=theme, is_admin=userid["admin"], add=False
+    )
 
 @app.route("/search/<keyword>/<int:friends_only>")
 @auth_required

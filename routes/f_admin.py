@@ -1,4 +1,4 @@
-from globals import Db, api  # GLOBAL_IMPORT
+from globals import Db, api, config # GLOBAL_IMPORT
 from routes.helpers import (
     auth_required,
     request,
@@ -40,6 +40,20 @@ def admin(userid):
 @auth_required
 def admin_redirect(userid):
     return redirect("/admin", 307)
+
+@app.route("/admin/update_tutors/<token>")
+def update_tutors(token):
+    if token != config.update_key:
+        return "Bad token", 400
+    # 166 is the id of the badge Tutors
+    tutors = api.get_all_in_group(166)
+    if tutors == 0:
+        return "Error", 500
+    with Db() as db:
+        for tut in tutors:
+            db.get_user_profile(tut["login"], api)
+        db.set_tutors([(tut["id"], tut["login"]) for tut in tutors])
+    return "OK", 200
 
 
 @app.route("/admin/whitelist_add", methods=["POST"])

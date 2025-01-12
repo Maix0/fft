@@ -281,35 +281,61 @@
                     };
                     enable = true;
                   };
-                  systemd.services =
-                    {
-                      fft-updater = {
-                        wantedBy = ["multi-user.target"];
-                        requires = ["network.target"];
-                        after = ["network.target"];
-                        enable = true;
-                        environment = {
-                          F42_PORT = toString cfg.port;
-                          F42_REDIS_PORT = toString cfg.redisPort;
-                          F42_REDIS_HOST = "localhost";
-                          F42_BOCAL_KEY = cfg.bocalToken;
-                          F42_UPDATE_KEY = cfg.updateToken;
-                          F42_DB = cfg.dbPath;
-                          F42_DOMAIN = cfg.domain;
+                  systemd = {
+                    services =
+                      {
+                        fft-updater = {
+                          wantedBy = ["multi-user.target"];
+                          requires = ["network.target"];
+                          after = ["network.target"];
+                          enable = true;
+                          environment = {
+                            F42_PORT = toString cfg.port;
+                            F42_REDIS_PORT = toString cfg.redisPort;
+                            F42_REDIS_HOST = "localhost";
+                            F42_BOCAL_KEY = cfg.bocalToken;
+                            F42_UPDATE_KEY = cfg.updateToken;
+                            F42_DB = cfg.dbPath;
+                            F42_DOMAIN = cfg.domain;
+                          };
+                          serviceConfig = {
+                            User = "fft";
+                            Group = "nobody";
+                            EnvironmentFile = "/env";
+                            ExecStart = "${getBin cfg.updaterPackage}/bin/updater";
+                          };
                         };
-                        serviceConfig = {
-                          User = "fft";
-                          Group = "nobody";
-                          EnvironmentFile = "/env";
-                          ExecStart = "${getBin cfg.updaterPackage}/bin/updater";
+
+                        fft-update-tutors = {
+                          wantedBy = ["multi-user.target"];
+                          requires = ["network.target"];
+                          after = ["network.target"];
+                          enable = true;
+                          script = ''
+                            ${pkgs.curl}/bin/curl -L http://127.0.0.1/admin/update_tutors/${lib.escapeShellArg cfg.updateToken}
+                          '';
+                          environment = {
+                            F42_DOMAIN = cfg.domain;
+                          };
                         };
+                      }
+                      // (listToAttrs (map
+                        (idx: {
+                          name = "fft-${toString idx}";
+                          value = mainSystemdUnit idx;
+                        }) (lib.range 1 cfg.instanceCount)));
+
+                    timers.fft-update-tutors = {
+                      enable = true;
+                      wantedBy = ["multi-user.target"];
+                      requires = ["network.target"];
+                      after = ["network.target" "fft-1.service"];
+                      timerConfig = {
+                        "OnUnitActiveSec" = "1d";
+                        "OnBootSec" = "20m";
                       };
-                    }
-                    // (listToAttrs (map
-                      (idx: {
-                        name = "fft-${toString idx}";
-                        value = mainSystemdUnit idx;
-                      }) (lib.range 1 cfg.instanceCount)));
+                    };
+                  };
                 };
               };
             });

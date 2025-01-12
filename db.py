@@ -54,6 +54,19 @@ class Db:
     def create_table(self, sql_file: str):
         self.cur.executescript(read_file(sql_file))
 
+    def set_tutors(self, values: list[tuple[int, str]]):
+        self.cur.execute("DELETE FROM TUTORS")
+        for id, name in values:
+            # no Nimon, you are not a tutor :)
+            if id == 60222:
+                continue
+            self.cur.execute("INSERT INTO TUTORS VALUES (?, ?)", [id, name])
+        self.commit()
+
+    def get_all_tutors(self):
+        req = self.cur.execute("SELECT USERS.* FROM TUTORS JOIN USERS ON USERS.id = TUTORS.id")
+        return req.fetchall()
+        
     # Users
     def create_user(self, user_data: dict, campus=1):
         def god(db, field, userid: int):

@@ -52,14 +52,16 @@
 					</div>
 				</div>
 			{% endfor %}
-			<div class="card p-0 m-2 shadow card-size grow" onclick="openAddFriend();">
-				<div class="m-1 w-100 card-img-top text-center card-not-img-size">
-					<i class="fa-solid fa-plus fa-5x"></i>
+			{% if add %}
+				<div class="card p-0 m-2 shadow card-size grow" onclick="openAddFriend();">
+					<div class="m-1 w-100 card-img-top text-center card-not-img-size">
+						<i class="fa-solid fa-plus fa-5x"></i>
+					</div>
+					<div class="card-body">
+						<h5 class="card-title">Ajouter un ami</h5>
+					</div>
 				</div>
-				<div class="card-body">
-					<h5 class="card-title">Ajouter un ami</h5>
-				</div>
-			</div>
+			{% endif %}
 		</div>
 	</div>
 
