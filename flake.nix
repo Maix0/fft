@@ -138,6 +138,28 @@
                 description = "domain to be used";
                 default = "localhost";
               };
+              backup = {
+                enable = mkEnableOption "Backup of database";
+                timer = mkOption {
+                  type = types.attrsOf types.str;
+                  description = "will be merged into a systemd.timers.<name>.timerConfig";
+                  default = {
+                    "OnUnitActiveSec" = "1d";
+                    "OnBootSec" = "1d";
+                  };
+                };
+                backupDir = mkOption {
+                  type = types.path;
+                  description = "Where the backup will be stored";
+                  default = "/var/lib/fft-backup/";
+                };
+                backupCount = mkOption {
+                  type = types.ints.positive;
+                  default = 5;
+                  description = "Number of stored backup";
+                };
+              };
+              description = "Backup the database";
             };
 
             config = mkIf cfg.enable (let
@@ -163,6 +185,46 @@
                 };
               };
             in {
+              systemd = mkIf cfg.backup.enable {
+                services.fft-backup = {
+                  wantedBy = ["multi-user.target"];
+                  requires = ["network.target"];
+                  after = ["network.target"];
+                  enable = true;
+                  script = ''
+                    TEMP_FILE=$(mktemp)
+
+                    ${
+                      concatStringsSep "\n" (lib.reverseList
+                        (map
+                          (idx: ''
+                            if [ -f ${lib.escapeShellArg "${cfg.backup.backupDir}/backup-${toString idx}.sq3"} ]; then
+                                ${pkgs.coreutils}/bin/touch -r ${lib.escapeShellArg "${cfg.backup.backupDir}/backup-${toString idx}.sq3"} "$TEMP_FILE"
+                                mv ${lib.escapeShellArg "${cfg.backup.backupDir}/backup-${toString idx}.sq3"} ${lib.escapeShellArg "${cfg.backup.backupDir}/backup-${toString (idx + 1)}.sq3"};
+                                ${pkgs.coreutils}/bin/touch -r "$TEMP_FILE" ${lib.escapeShellArg "${cfg.backup.backupDir}/backup-${toString idx}.sq3"}
+                            fi
+                          '')
+                          (lib.range 0 (cfg.backup.backupCount - 1))))
+                    }
+                      until [ -f "/var/lib/nixos-containers/fft/${cfg.dbPath}" ]; do
+                        echo "Unable to find the database, sleeping for 30s...";
+                        sleep 30;
+                      done;
+                      ${pkgs.sqlite}/bin/sqlite3 /var/lib/nixos-containers/fft/var/lib/fft/database.db ".backup "${lib.escapeShellArg "${cfg.backup.backupDir}"}/backup-0.sq3
+                  '';
+                };
+                timers.fft-backup = {
+                  enable = true;
+                  wantedBy = ["multi-user.target"];
+                  requires = ["network.target"];
+                  after = ["network.target"];
+                  timerConfig = cfg.backup.timer;
+                };
+              };
+              system.activationScripts.fft = mkIf cfg.backup.enable (lib.stringAfter ["var"] ''
+                mkdir -p ${lib.escapeShellArg cfg.backup.backupDir}
+              '');
+
               containers.fft = {
                 privateNetwork = false; # TODO: maybe change it ?
                 bindMounts = {
@@ -274,6 +336,13 @@
               envFile = "/etc/envfile";
               domain = "fft.maix.me";
               port = 80;
+              backup = {
+                enable = true;
+                timer = {
+                  "OnUnitActiveSec" = "1m";
+                  "OnBootSec" = "1m";
+                };
+              };
             };
           })
           ({
