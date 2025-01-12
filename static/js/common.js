@@ -163,6 +163,7 @@ function openFriend(name, auto_reload = false) {
 				let openFriendProfile = document.getElementById("openFriendProfile");
 				let openFriendShowCluster = document.getElementById('openFriendShowCluster');
 				let isAdmin = document.getElementById('modal-admin');
+				let istag = document.getElementById('modal-tag');
 				let pool = openFriendModalName.querySelector('.pool');
 				let modal_name = openFriendModalName.querySelector('.name');
 				let send_msg = document.getElementById('send_msg');
@@ -179,7 +180,9 @@ function openFriend(name, auto_reload = false) {
 				isAdmin.hidden = !(data.admin !== false);
 				if (data.admin)
 					isAdmin.innerHTML = data.admin.tag;
-
+				istag.hidden = !(data.tag !== false);
+				if(data.tag)
+					istag.innerHTML = data.tag;
 				if (send_msg) {
 					send_msg.onclick = () => {
 						document.getElementById("dest-login").value = name;

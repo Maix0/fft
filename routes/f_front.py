@@ -199,12 +199,18 @@ def friends_route(userid):
     theme = db.get_theme(userid["userid"])
     friend_list = db.get_friends(userid["userid"])
     shadow_bans = db.get_shadow_bans(userid["userid"])
-    db.close()
     for friend in friend_list:
         if friend["has"] in shadow_bans:
             friend["position"] = None
             friend["last_active"] = ""
         else:
+            friend.update({"admin": {"tag": db.get_admin_tag(friend["id"])}})
+            print(type(friend["admin"]["tag"]))
+            if len(friend["admin"]["tag"]) == 0:
+                friend["admin"]["tag"] = ""
+            else :
+                friend["admin"]["tag"] = friend["admin"]["tag"][0]["tag"]
+            # friend["admin"]["tag"] = db.get_admin_tag(friend["id"])
             friend["position"] = get_position(friend["name"])
             if friend["active"] and friend["position"] is None:
                 date = arrow.get(friend["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
@@ -216,6 +222,7 @@ def friends_route(userid):
     friend_list = sorted(friend_list, key=lambda d: d["name"])
     friend_list = sorted(friend_list, key=lambda d: 0 if d["relation"] == 1 else 1)
     friend_list = sorted(friend_list, key=lambda d: 0 if d["position"] else 1)
+    db.close()
     return render_template(
         "friends.html", friends=friend_list, theme=theme, is_admin=userid["admin"]
     )
