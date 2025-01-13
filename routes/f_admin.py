@@ -24,6 +24,7 @@ def admin(userid):
         whitelist = db.get_all_whitelist()
         admin = db.get_all_admins()
         tags = db.get_all_tags()
+        tutor_station = db.get_all_tutor_stations()
     return render_template(
         "admin.html",
         user=userid,
@@ -31,6 +32,7 @@ def admin(userid):
         silents=silents,
         whitelist=whitelist,
         admins=admin,
+        tutor_stations=tutor_station,
         tags=tags,
         is_admin=True,
     )
