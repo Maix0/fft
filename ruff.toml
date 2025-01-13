@@ -1,3 +1,4 @@
 [lint]
 # E722: bare except
-ignore = ["E722"]
+# F401: unused import
+ignore = ["E722", "F401"]

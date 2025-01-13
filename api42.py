@@ -84,7 +84,7 @@ class Api:
         while len_ == 100:
             self.add_rate()
             data, status, headers = self.get(
-                f"/groups/{group_id}/users", [f"page[size]=100", f"page[number]={page}"]
+                f"/groups/{group_id}/users", ["page[size]=100", f"page[number]={page}"]
             )
             if status == 200:
                 out += data

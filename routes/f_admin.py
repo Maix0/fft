@@ -84,11 +84,12 @@ def add_whilelist(userid):
     if not verify_csrf(request.form["csrf"]):
         return "Please refresh and try again", 401
     with Db() as db:
-        user_id = api.get_user_id_by_login(request.form["login"])
-        print(f"user id {request.form['login']}")
+        login = request.form["login"].strip().lower()
+        user_id = api.get_user_id_by_login(login)
+        api.get_user_profile(login)
         if user_id == 0:
-            return "Login does not exist"
-        db.add_whitelist(user_id=user_id, user_login=request.form["login"])
+            return "Login does not exist", 404
+        db.add_whitelist(user_id=user_id, user_login=login)
     return ""
 
 
@@ -117,8 +118,8 @@ def add_tutor_station(userid):
     if not verify_csrf(request.form["csrf"]):
         return "Please refresh and try again", 401
     with Db() as db:
+        station = request.form["station"].strip()
         campus = int(request.form["campus"])
-        station = request.form["station"]
         db.insert_tutor_station(campus=campus, station=station)
     return ""
 
@@ -148,8 +149,9 @@ def set_user_tag(userid):
     if not verify_csrf(request.form["csrf"]):
         return "Please refresh and try again", 401
     with Db() as db:
-        id = api.get_user_id_by_login(login=request.form["login"])
-        tag = request.form["tag"]
+        login = request.form["login"].strip().lower()
+        id = api.get_user_id_by_login(login=login)
+        tag = request.form["tag"].strip()
         if tag == "":
             db.set_tag(user_id=id, tag=None)
         else:
@@ -170,7 +172,7 @@ def set_admin_tag(userid):
         else userid["userid"]
     )
     with Db() as db:
-        db.admin_change_tag(user_to_change, request.form["tag"])
+        db.admin_change_tag(user_to_change, request.form["tag"].strip())
     return ""
 
 
@@ -187,7 +189,7 @@ def add_piscine(userid):
     if not verify_csrf(request.form["csrf"]):
         return "Please refresh and try again", 401
     with Db() as db:
-        db.insert_piscine(int(request.form["campus"]), request.form["cluster"])
+        db.insert_piscine(int(request.form["campus"]), request.form["cluster"].strip())
     return ""
 
 
@@ -216,7 +218,7 @@ def add_silent(userid):
     if not verify_csrf(request.form["csrf"]):
         return "Please refresh and try again", 401
     with Db() as db:
-        db.insert_silent(int(request.form["campus"]), request.form["cluster"])
+        db.insert_silent(int(request.form["campus"]), request.form["cluster"].strip())
     return ""
 
 
@@ -245,7 +247,9 @@ def add_piscine_date(userid):
     if not verify_csrf(request.form["csrf"]):
         return "Please refresh and try again", 401
     with Db() as db:
-        db.insert_piscine_date(request.form["month"], request.form["year"])
+        db.insert_piscine_date(
+            request.form["month"].strip().lower(), request.form["year"].strip().lower()
+        )
     return ""
 
 
