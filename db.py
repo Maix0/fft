@@ -64,9 +64,15 @@ class Db:
         self.commit()
 
     def get_all_tutors(self):
-        req = self.cur.execute("SELECT USERS.* FROM TUTORS JOIN USERS ON USERS.id = TUTORS.id")
+        req = self.cur.execute(
+            "SELECT USERS.* FROM TUTORS JOIN USERS ON USERS.id = TUTORS.id"
+        )
         return req.fetchall()
-        
+
+    def is_tutors(self, userid: int):
+        req = self.cur.execute("SELECT * FROM TUTORS where id = ?", [userid])
+        return len(req.fetchall()) > 0
+
     # Users
     def create_user(self, user_data: dict, campus=1):
         def god(db, field, userid: int):
@@ -79,7 +85,7 @@ class Db:
             if user_data["location"]
             else god("USERS", "active", uid)
         )
-        tag = god("USERS", "tag", uid);
+        tag = god("USERS", "tag", uid)
         if not campus or type(campus) is not int:
             campus = 1
         self.cur.execute(
@@ -445,6 +451,21 @@ class Db:
             [campus, cluster],
         )
         return True if req.fetchone() else False
+
+    # Piscine dates
+    def insert_piscine_date(self, month: str, year: str):
+        self.cur.execute(
+            "INSERT INTO PISCINE_DATES(month, year) VALUES(?, ?)", [month, year]
+        )
+        self.commit()
+
+    def remove_piscine_date(self, piscine_date: int):
+        self.cur.execute("DELETE FROM PISCINE_DATES WHERE id = ?", [piscine_date])
+        self.commit()
+
+    def get_all_piscine_dates(self):
+        req = self.cur.execute("SELECT * FROM PISCINE_DATES")
+        return req.fetchall()
 
     # Silents clusters
     def insert_silent(self, campus: int, cluster: str):

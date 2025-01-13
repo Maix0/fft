@@ -76,14 +76,16 @@ class Api:
             if len(data):
                 return data[0]["id"]
         return 0
-    
+
     def get_all_in_group(self, group_id: int):
         out = []
         len_ = 100
         page = 0
         while len_ == 100:
             self.add_rate()
-            data, status, headers = self.get(f"/groups/{group_id}/users", [f"page[size]=100", f"page[number]={page}"])
+            data, status, headers = self.get(
+                f"/groups/{group_id}/users", [f"page[size]=100", f"page[number]={page}"]
+            )
             if status == 200:
                 out += data
             else:

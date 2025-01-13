@@ -52,6 +52,7 @@ def auth_required(function):
         details = db.get_user_by_id(userid["userid"])
         theme = db.get_theme(userid["userid"])
         tag = db.get_tag(userid["userid"])
+        is_tutor = db.is_tutors(userid["userid"])
         db.close()
         userid["admin"] = is_admin
         userid["tag"] = tag["tag"]
@@ -59,6 +60,7 @@ def auth_required(function):
         userid["login"] = details["name"]
         userid["image_medium"] = proxy_images(details["image_medium"])
         userid["theme"] = theme
+        userid["is_tutor"] = is_tutor
         g.user = userid
         kwargs["userid"] = userid
         return function(*args, **kwargs)

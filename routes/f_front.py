@@ -105,9 +105,10 @@ def index(userid):
         whitelist_ids.add(user["user_id"])
     me = db.get_user_profile_id(userid["userid"])
     theme = db.get_theme(userid["userid"])
-    shadow_bans = db.get_shadow_bans(userid["userid"])
+    tutors = [x["id"] for x in db.get_all_tutors()]
     piscines = [x["cluster"] for x in db.get_piscines(userid["campus"])]
     silents = [x["cluster"] for x in db.get_silents(userid["campus"])]
+    piscine_date = [(x["month"], x["year"]) for x in db.get_all_piscine_dates()]
     tutor_stations = [
         x["station"]
         for x in db.get_all_tutor_stations()
@@ -130,8 +131,6 @@ def index(userid):
     # TODO: optimize this
     for user in cache_tab:
         user_id = user["user"]["id"]
-        if user_id in shadow_bans:
-            continue
         friend, close_friend = False, False
         friend = user_id in [e["has"] for e in friends]
         if friend:
@@ -175,6 +174,7 @@ def index(userid):
         }
         for cluster in campus_map["allowed"]
     ]
+    print(userid)
     return render_template(
         "index.html",
         map=campus_map[cluster_name],
@@ -187,8 +187,9 @@ def index(userid):
         theme=theme,
         silent=silents,
         focus=request.args.get("p"),
-        is_admin=userid["admin"],
         tutor_station=tutor_stations,
+        piscine_date=piscine_date,
+        tutors=tutors,
     )
 
 
@@ -198,35 +199,29 @@ def friends_route(userid):
     db = Db(config.db_path)
     theme = db.get_theme(userid["userid"])
     friend_list = db.get_friends(userid["userid"])
-    shadow_bans = db.get_shadow_bans(userid["userid"])
     for friend in friend_list:
-        if friend["has"] in shadow_bans:
-            friend["position"] = None
-            friend["last_active"] = ""
+        friend.update({"admin": {"tag": db.get_admin_tag(friend["id"])}})
+        print(type(friend["admin"]["tag"]))
+        if len(friend["admin"]["tag"]) == 0:
+            friend["admin"]["tag"] = ""
         else:
-            friend.update({"admin": {"tag": db.get_admin_tag(friend["id"])}})
-            print(type(friend["admin"]["tag"]))
-            if len(friend["admin"]["tag"]) == 0:
-                friend["admin"]["tag"] = ""
-            else :
-                friend["admin"]["tag"] = friend["admin"]["tag"][0]["tag"]
-            friend["position"] = get_position(friend["name"])
-            if (friend["tag"] is None):
-                friend["tag"] = ""
-            if friend["active"] and friend["position"] is None:
-                date = arrow.get(friend["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
-                friend["last_active"] = "depuis " + date.humanize(
-                    locale="FR", only_distance=True
-                )
-            else:
-                friend["last_active"] = ""
+            friend["admin"]["tag"] = friend["admin"]["tag"][0]["tag"]
+        friend["position"] = get_position(friend["name"])
+        if friend["tag"] is None:
+            friend["tag"] = ""
+        if friend["active"] and friend["position"] is None:
+            date = arrow.get(friend["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
+            friend["last_active"] = "depuis " + date.humanize(
+                locale="FR", only_distance=True
+            )
+        else:
+            friend["last_active"] = ""
     friend_list = sorted(friend_list, key=lambda d: d["name"])
     friend_list = sorted(friend_list, key=lambda d: 0 if d["relation"] == 1 else 1)
     friend_list = sorted(friend_list, key=lambda d: 0 if d["position"] else 1)
     db.close()
-    return render_template(
-        "friends.html", friends=friend_list, theme=theme, is_admin=userid["admin"], add=True
-    )
+    return render_template("friends.html", friends=friend_list, theme=theme, add=True)
+
 
 @app.route("/tutors/")
 @auth_required
@@ -234,16 +229,15 @@ def tutors_route(userid):
     db = Db(config.db_path)
     theme = db.get_theme(userid["userid"])
     tutor_list = db.get_all_tutors()
-    shadow_bans = db.get_shadow_bans(userid["userid"])
     for tutor in tutor_list:
         tutor.update({"has": 0})
         tutor.update({"admin": {"tag": db.get_admin_tag(tutor["id"])}})
         if len(tutor["admin"]["tag"]) == 0:
             tutor["admin"]["tag"] = ""
-        else :
+        else:
             tutor["admin"]["tag"] = tutor["admin"]["tag"][0]["tag"]
         tutor["position"] = get_position(tutor["name"])
-        if (tutor["tag"] is None):
+        if tutor["tag"] is None:
             tutor["tag"] = ""
         if tutor["active"] and tutor["position"] is None:
             date = arrow.get(tutor["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
@@ -255,9 +249,8 @@ def tutors_route(userid):
     tutor_list = sorted(tutor_list, key=lambda d: d["name"])
     tutor_list = sorted(tutor_list, key=lambda d: 0 if d["position"] else 1)
     db.close()
-    return render_template(
-        "friends.html", friends=tutor_list, theme=theme, is_admin=userid["admin"], add=False
-    )
+    return render_template("friends.html", friends=tutor_list, theme=theme, add=False)
+
 
 @app.route("/search/<keyword>/<int:friends_only>")
 @auth_required
@@ -274,6 +267,7 @@ def search_route(keyword, friends_only, userid):
     db.close()
     resp = [{"type": "user", "v": e["name"], "s": e["name"]} for e in req_friends]
     return resp, 200
+
 
 # Manual things that need to be routed on /
 

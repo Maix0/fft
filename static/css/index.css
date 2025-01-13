@@ -117,6 +117,23 @@ div.scroll {
 	background-color: #d35400 !important;
 }
 
+.tutor {
+	background-color: #ff9900 !important;
+}
+
+.tutor-shield {
+	color: #ff9900 !important;
+}
+
+.tutor-spot {
+	background-color: #ff9900 !important;
+	/*background-color: #ff0000 !important;*/
+}
+
+.wrong-cluster {
+	background-color: #f00000 !important;
+}
+
 .no-shadow {
 	filter: none !important;
 }
