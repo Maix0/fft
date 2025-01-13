@@ -79,11 +79,12 @@ class Db:
             if user_data["location"]
             else god("USERS", "active", uid)
         )
+        tag = god("USERS", "tag", uid);
         if not campus or type(campus) is not int:
             campus = 1
         self.cur.execute(
-            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus) "
-            f"VALUES(?, ?, ?, ?, ?, {active}, {campus})",
+            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus, tag) "
+            f"VALUES(?, ?, ?, ?, ?, {active}, {campus}, (SELECT COALESCE({tag}, NULL)))",
             [
                 uid,
                 user_data["login"],
