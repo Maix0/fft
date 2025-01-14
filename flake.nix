@@ -2,6 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    whakaahua.url = "github:maix0/whakaahua";
   };
 
   outputs = {
@@ -29,6 +30,7 @@
         ];
       };
       packages = rec {
+        inherit (inputs.whakaahua.packages.${system}) whakaahua;
         default = fft;
         fft = with pkgs.python3.pkgs;
           pkgs.stdenvNoCC.mkDerivation {
@@ -240,6 +242,7 @@
                 autoStart = true;
                 hostAddress = "192.168.100.2";
                 config = {
+                  boot.tmp.cleanOnBoot = true;
                   system.stateVersion = "24.11";
                   networking.firewall.allowedTCPPorts = [cfg.port];
                   system.activationScripts.fft = lib.stringAfter ["var"] ''
@@ -269,6 +272,9 @@
                       locations = {
                         "/" = {
                           proxyPass = "http://${cfg.domain}";
+                        };
+                        "/proxy" = {
+                          proxyPass = "http://localhost:9990";
                         };
                       };
                       listen = [
@@ -305,14 +311,41 @@
                             ExecStart = "${getBin cfg.updaterPackage}/bin/updater";
                           };
                         };
+                        fft-proxy = {
+                          wantedBy = ["multi-user.target"];
+                          requires = ["network.target"];
+                          after = ["network.target"];
+                          enable = true;
+                          environment = {
+                            P42_PORT = toString 9990;
+                            P42_DATA_DIR = "/tmp/fft-proxy-dir";
+                          };
+                          serviceConfig = {
+                            User = "fft";
+                            Group = "nobody";
+                            ExecStart = "${self.packages.${pkgs.system}.whakaahua}/bin/whakaahua";
+                          };
+                        };
 
                         fft-update-tutors = {
                           wantedBy = ["multi-user.target"];
                           requires = ["network.target"];
                           after = ["network.target"];
-                          enable = true;
+                          enable = false;
                           script = ''
-                            ${pkgs.curl}/bin/curl -L http://127.0.0.1:${toString cfg.port}/admin/update/tutors/${lib.escapeShellArg cfg.updateToken}
+                            ${pkgs.curl}/bin/curl -L http://localhost:${toString cfg.port}/admin/update/tutors/${lib.escapeShellArg cfg.updateToken}
+                          '';
+                          environment = {
+                            F42_DOMAIN = cfg.domain;
+                          };
+                        };
+                        fft-proxy-cleanup = {
+                          wantedBy = ["multi-user.target"];
+                          requires = ["network.target"];
+                          after = ["network.target"];
+                          enable = false;
+                          script = ''
+                            rm -rf /tmp/fft-proxy-dir
                           '';
                           environment = {
                             F42_DOMAIN = cfg.domain;
@@ -325,14 +358,26 @@
                           value = mainSystemdUnit idx;
                         }) (lib.range 1 cfg.instanceCount)));
 
-                    timers.fft-update-tutors = {
-                      enable = true;
-                      wantedBy = ["multi-user.target"];
-                      requires = ["network.target"];
-                      after = ["network.target" "fft-1.service"];
-                      timerConfig = {
-                        "OnUnitActiveSec" = "1d";
-                        "OnBootSec" = "20m";
+                    timers = {
+                      fft-update-tutors = {
+                        enable = true;
+                        wantedBy = ["multi-user.target"];
+                        requires = ["network.target"];
+                        after = ["network.target" "fft-1.service"];
+                        timerConfig = {
+                          "OnUnitActiveSec" = "1d";
+                          "OnBootSec" = "10m";
+                        };
+                      };
+                      fft-proxy-cleanup = {
+                        enable = true;
+                        wantedBy = ["multi-user.target"];
+                        requires = ["network.target"];
+                        after = ["network.target"];
+                        timerConfig = {
+                          "OnUnitActiveSec" = "1d";
+                          "OnBootSec" = "10m";
+                        };
                       };
                     };
                   };
