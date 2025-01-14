@@ -25,7 +25,12 @@ def add_friend(add, userid):
             if status == 200:
                 create_users(db, [{"user": resp}])
             else:
-                return "", 404
+                val = db.get_user_profile(friend, api);
+                if val:
+                    resp = {"id": val}
+                else:
+                    print(friend);
+                    return "", 404
             add_id = {"id": resp["id"]}
         if not db.add_friend(userid["userid"], add_id["id"]):
             success = False

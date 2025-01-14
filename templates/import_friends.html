@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+{% block css %}<link href="/static/css/friends.css?v={{ version }}" rel="stylesheet" />{% endblock %}
+{% block content %}
+    <input type="file" id="fileInput" accept=".json" />
+    <button class="btn-success" onclick="dump_json()">Import</button>
+</button>
+{% endblock %}
+{% block scripts %}
+    <script>
+	const filePickup = document.querySelector("#fileInput");
+
+	function dump_json() {
+		if (filePickup.files.Length < 1) return;
+		const file = filePickup.files[0];
+		const reader = new FileReader();
+		reader.addEventListener("load", () => {
+			const json = JSON.parse(reader.result);
+			const friends = json.friends.map((f) => f.name);
+			const friends_string = friends.join(",");
+			console.log(friends_string);
+
+			fetch(`/friends/add/${friends_string}`);
+		});
+		reader.readAsText(file);
+	}
+    </script>
+{% endblock %}

@@ -60,6 +60,11 @@ def profile(login, userid):
     )
 
 
+@app.route("/import_friends/", methods=["GET"])
+@auth_required
+def import_friends(userid):
+    return render_template("import_friends.html")
+
 @app.route("/settings/", methods=["GET", "POST"])
 @auth_required
 def settings(userid):
@@ -80,7 +85,6 @@ def settings(userid):
         cookies=cookies,
         kiosk_buildings=kiosk_buildings,
         domain=config.domain,
-        is_admin=userid["admin"],
     )
 
 
