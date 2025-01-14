@@ -312,7 +312,7 @@
                           after = ["network.target"];
                           enable = true;
                           script = ''
-                            ${pkgs.curl}/bin/curl -L http://127.0.0.1:${cfg.port}/admin/update/tutors/${lib.escapeShellArg cfg.updateToken}
+                            ${pkgs.curl}/bin/curl -L http://127.0.0.1:${toString cfg.port}/admin/update/tutors/${lib.escapeShellArg cfg.updateToken}
                           '';
                           environment = {
                             F42_DOMAIN = cfg.domain;
