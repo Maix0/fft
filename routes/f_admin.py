@@ -86,7 +86,7 @@ def add_whilelist(userid):
     with Db() as db:
         login = request.form["login"].strip().lower()
         user_id = api.get_user_id_by_login(login)
-        api.get_user_profile(login)
+        db.get_user_profile(login, api)
         if user_id == 0:
             return "Login does not exist", 404
         db.add_whitelist(user_id=user_id, user_login=login)
@@ -150,12 +150,12 @@ def set_user_tag(userid):
         return "Please refresh and try again", 401
     with Db() as db:
         login = request.form["login"].strip().lower()
-        id = api.get_user_id_by_login(login=login)
+        user = db.get_user_profile(login, api)
         tag = request.form["tag"].strip()
         if tag == "":
-            db.set_tag(user_id=id, tag=None)
+            db.set_tag(user_id=user["id"], tag=None)
         else:
-            db.set_tag(user_id=id, tag=tag)
+            db.set_tag(user_id=user["id"], tag=tag)
     return ""
 
 

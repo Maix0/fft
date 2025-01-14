@@ -114,8 +114,6 @@
 								{%- set relation = 'whitelist' -%}
 							{%- elif y in locations and locations[y]['close_friend'] -%}
 								{%- set relation = 'close_friend' -%}
-							{%- elif y in locations and locations[y]['user']['id'] in tutors -%}
-								{%- set relation = 'tutors' -%}
 							{%- elif y in locations and locations[y]['friend'] -%}
 								{%- set relation = 'friend' -%}
 							{%- elif y in issues_map and issues_map[y]['count'] >= 1 and issues_map[y]['issue'] == 1 -%}
@@ -124,7 +122,12 @@
 								{%- set relation = 'attention' -%}
 							{%- elif y in locations and locations[y]['pool'] and actual_cluster not in piscine -%}
 								{%- set relation = 'pooled' -%}
-							{%- elif actual_cluster in piscine and y in locations and not locations[y]['user']['tutors'] and y in tutor_station -%}
+							{%- endif -%}
+							
+							{%- if actual_cluster in piscine and y in locations and locations[y]['user']['id'] in tutors -%}
+								{%- set relation = 'tutor' -%}
+								{%- set text_color = '' -%}
+							{%- elif actual_cluster in piscine and y in locations and not locations[y]['user']['tutor'] in tutors and y in tutor_station -%}
 								{%- set relation = 'tutor-spot' -%}
 								{%- set text_color = '' -%}
 							{%- endif -%}

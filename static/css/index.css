@@ -118,7 +118,8 @@ div.scroll {
 }
 
 .tutor {
-	background-color: #ff9900 !important;
+	background-color: #ff9000 !important;
+	color: white !important;
 }
 
 .tutor-shield {
@@ -126,8 +127,8 @@ div.scroll {
 }
 
 .tutor-spot {
-	background-color: #ff9900 !important;
-	/*background-color: #ff0000 !important;*/
+	background-color: #ffee00 !important;
+	color: black !important;
 }
 
 .wrong-cluster {
