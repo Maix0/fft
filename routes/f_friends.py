@@ -13,11 +13,11 @@ app = Blueprint("friends", __name__, template_folder="templates")
 def add_friend(add, userid):
     db = Db(config.db_path)
     friends = add.split(",")
-    success = True
+    failed_friends = []
     for friend in friends:
         friend = friend.strip().lower()
         if len(friend) < 3:
-            success = False
+            failed_friends.append(friend)
             continue
         add_id = db.get_user(friend)
         if add_id is None:
@@ -25,17 +25,19 @@ def add_friend(add, userid):
             if status == 200:
                 create_users(db, [{"user": resp}])
             else:
-                val = db.get_user_profile(friend, api);
+                val = db.get_user_profile(friend, api)
                 if val:
-                    resp = {"id": val}
+                    resp = {"id": val["id"]}
                 else:
-                    print(friend);
-                    return "", 404
+                    failed_friends.append(friend)
+                    continue
             add_id = {"id": resp["id"]}
         if not db.add_friend(userid["userid"], add_id["id"]):
-            success = False
+            failed_friends.append(friend)
     db.close()
-    return "", 200 if success else 404
+    if len(failed_friends):
+        return f"failed_friends: {", ".join(failed_friends)}", 404
+    return "Ok", 200
 
 
 @app.route("/friends/remove/<remove>")
