@@ -94,7 +94,7 @@
             cfg = config.services.fft;
           in {
             options.services.fft = {
-              extraBindMounts = {
+              extraBindMounts = mkOption {
                 types = types.attrs;
                 default = {};
                 description = "Extra bind mounts for the containers";
