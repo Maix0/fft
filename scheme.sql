@@ -53,24 +53,6 @@ CREATE TABLE IF NOT EXISTS PROFILES
 	recit   TEXT        DEFAULT ''
 );
 
-CREATE TABLE IF NOT EXISTS BAN_LIST
-(
-	id     INTEGER PRIMARY KEY AUTOINCREMENT,
-	userid INTEGER,
-	reason TEXT,
-	since  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (userid) REFERENCES USERS (id)
-);
-
-CREATE TABLE IF NOT EXISTS NOTIFICATIONS_TELEGRAM
-(
-	userid      INTEGER PRIMARY KEY,
-	telegram_id INTEGER,
-	message     TEXT    DEFAULT NULL,
-	enabled     INTEGER DEFAULT 1,
-	FOREIGN KEY (userid) REFERENCES USERS (id)
-);
-
 CREATE TABLE IF NOT EXISTS THEME
 (
 	userid     INTEGER PRIMARY KEY,
@@ -78,47 +60,6 @@ CREATE TABLE IF NOT EXISTS THEME
 	css        TEXT    DEFAULT NULL,
 	enabled    INTEGER DEFAULT 0,
 	FOREIGN KEY (userid) REFERENCES USERS (id)
-);
-
-CREATE TABLE IF NOT EXISTS MATES
-(
-	id             INTEGER PRIMARY KEY AUTOINCREMENT,
-	project        TEXT,
-	created        DATETIME DEFAULT CURRENT_TIMESTAMP,
-	creator_id     INTEGER,
-	campus         INTEGER,
-	people         INTEGER,
-	deadline       TEXT     DEFAULT NULL,
-	progress       INTEGER  DEFAULT 0,
-	quick_contacts TEXT,
-	mates          TEXT,
-	description    TEXT,
-	contact        TEXT,
-	UNIQUE (project, creator_id),
-	FOREIGN KEY (creator_id) REFERENCES USERS (id)
-);
-
-CREATE TABLE IF NOT EXISTS PROJECTS
-(
-	id           INTEGER PRIMARY KEY,
-	name         TEXT NOT NULL,
-	slug         TEXT NOT NULL,
-	solo         INTEGER DEFAULT 1,
-	subject      TEXT    DEFAULT NULL,
-	description  TEXT    DEFAULT NULL,
-	experience   INTEGER DEFAULT 0,
-	attachements TEXT    DEFAULT '[]'
-);
-
-CREATE TABLE IF NOT EXISTS SHADOW_BAN
-(
-	id       INTEGER PRIMARY KEY AUTOINCREMENT,
-	user     INTEGER,
-	offender INTEGER,
-	reason   TEXT DEFAULT '',
-	UNIQUE (user, offender),
-	FOREIGN KEY (user) REFERENCES USERS (id),
-	FOREIGN KEY (offender) REFERENCES USERS (id)
 );
 
 CREATE TABLE IF NOT EXISTS WHITELIST
@@ -150,28 +91,6 @@ CREATE TABLE IF NOT EXISTS SILENTS
 	campus  INTEGER DEFAULT 1,
 	cluster TEXT
 );
-
-CREATE TABLE IF NOT EXISTS MESSAGES
-(
-	id        INTEGER PRIMARY KEY AUTOINCREMENT,
-	author    INTEGER,
-	dest      INTEGER,
-	content   TEXT,
-	anonymous INTEGER   DEFAULT 0,
-	read      INTEGER   DEFAULT 0,
-	created   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (author) REFERENCES USERS (id)
-);
-
-CREATE TABLE IF NOT EXISTS SPECIAL_USERS
-(
-	sp_id         INTEGER PRIMARY KEY AUTOINCREMENT,
-	sp_tag        TEXT,
-	sp_tag_style  TEXT,
-	sp_author     TEXT,
-	sp_send_key   TEXT UNIQUE
-);
-
 
 CREATE TABLE IF NOT EXISTS TUTOR_STATION
 (

@@ -23,7 +23,7 @@ def admin(userid):
         silents = db.get_all_silents()
         whitelist = db.get_all_whitelist()
         admin = db.get_all_admins()
-        tags = db.get_all_tags()
+        tags = db.get_all_user_tags()
         tutor_station = db.get_all_tutor_stations()
         piscines_dates = db.get_all_piscine_dates()
     return render_template(
@@ -153,9 +153,9 @@ def set_user_tag(userid):
         user = db.get_user_profile(login, api)
         tag = request.form["tag"].strip()
         if tag == "":
-            db.set_tag(user_id=user["id"], tag=None)
+            db.set_user_tag(user_id=user["id"], tag=None)
         else:
-            db.set_tag(user_id=user["id"], tag=tag)
+            db.set_user_tag(user_id=user["id"], tag=tag)
     return ""
 
 

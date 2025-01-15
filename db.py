@@ -54,6 +54,7 @@ class Db:
     def create_table(self, sql_file: str):
         self.cur.executescript(read_file(sql_file))
 
+    # Tutors
     def set_tutors(self, values: list[tuple[int, str]]):
         self.cur.execute("DELETE FROM TUTORS")
         for id, name in values:
@@ -365,11 +366,6 @@ class Db:
         )
         return query.fetchone()
 
-    # Whiatelist
-    def is_banned(self, user_id: int) -> bool:
-        query = self.cur.execute("SELECT 1 FROM BAN_lIST WHERE userid = ?", [user_id])
-        return query.fetchone() is not None
-
     def is_whitelisted(self, user_id: int) -> bool:
         query = self.cur.execute("SELECT 1 FROM WHITELIST WHERE user_id = ?", [user_id])
         return query.fetchone() is not None
@@ -392,39 +388,6 @@ class Db:
     # Update process
     def raw_query(self, query, args):
         return self.cur.execute(query, args)
-
-    # Shadow ban
-    def is_shadow_banned(self, user: int, offender: int) -> bool:
-        req = self.cur.execute(
-            "SELECT 1 FROM SHADOW_BAN WHERE user = ? AND offender = ?", [user, offender]
-        )
-        return req.fetchone() is not None
-
-    def get_shadow_bans(self, offender: int) -> list:
-        req = self.cur.execute(
-            "SELECT user FROM SHADOW_BAN WHERE offender = ?", [offender]
-        )
-        parsed = []
-        for user in req.fetchall():
-            parsed.append(user["user"])
-        return parsed
-
-    def shadow_ban(self, user: int, offender: int, reason: str):
-        self.cur.execute(
-            "INSERT INTO SHADOW_BAN(user, offender, reason) VALUES(?, ?, ?)",
-            [user, offender, reason],
-        )
-        self.commit()
-
-    def remove_shadow_ban(self, ban_id: int):
-        self.cur.execute("DELETE FROM SHADOW_BAN WHERE id = ?", [ban_id])
-        self.commit()
-
-    def get_all_shadow_bans(self):
-        req = self.cur.execute(
-            "SELECT USERS.name as offender_login, SHADOW_BAN.id as ban_id, reason, SHADOW_BAN.user AS victim FROM SHADOW_BAN LEFT JOIN USERS ON USERS.id = SHADOW_BAN.offender"
-        )
-        return req.fetchall()
 
     # Piscines
     def insert_piscine(self, campus: int, cluster: str):
@@ -493,7 +456,7 @@ class Db:
         )
         return True if req.fetchone() else False
 
-    # Silents clusters
+    # Tutor station clusters
     def insert_tutor_station(self, campus: int, station: str):
         self.cur.execute(
             "INSERT INTO TUTOR_STATION(campus, station) VALUES(?, ?)",
@@ -520,6 +483,20 @@ class Db:
         )
         return True if req.fetchone() else False
 
+    def get_user_tag(self, user_id: int):
+        req = self.cur.execute("SELECT tag FROM USERS WHERE id = ?", [user_id])
+        return req.fetchone()
+
+    def set_user_tag(self, user_id: int, tag: str):
+        req = self.cur.execute("UPDATE USERS SET tag= ? WHERE id = ?", [tag, user_id])
+        return req.fetchall()
+
+    def get_all_user_tags(self):
+        req = self.cur.execute(
+            "SELECT id, name, tag FROM USERS WHERE tag IS NOT NULL", []
+        )
+        return req.fetchall()
+
     # Admin
     def is_admin(self, user_id: int):
         req = self.cur.execute("SELECT * FROM PERMISSIONS WHERE user_id = ?", [user_id])
@@ -543,36 +520,3 @@ class Db:
     def get_all_admins(self):
         req = self.cur.execute("SELECT * FROM PERMISSIONS")
         return req.fetchall()
-
-    def get_special_user_by_key(self, key: str):
-        req = self.cur.execute(
-            "SELECT * FROM SPECIAL_USERS WHERE sp_send_key = ?", [key]
-        )
-        return req.fetchone()
-
-    def get_tag(self, user_id: int):
-        req = self.cur.execute("SELECT tag FROM USERS WHERE id = ?", [user_id])
-        return req.fetchone()
-
-    def set_tag(self, user_id: int, tag: str):
-        req = self.cur.execute("UPDATE USERS SET tag= ? WHERE id = ?", [tag, user_id])
-        return req.fetchall()
-
-    def get_all_tags(self):
-        req = self.cur.execute(
-            "SELECT id, name, tag FROM USERS WHERE tag IS NOT NULL", []
-        )
-        return req.fetchall()
-
-    def get_special_user_by_id(self, sp_id: int):
-        req = self.cur.execute("SELECT * FROM SPECIAL_USERS WHERE sp_id = ?", [sp_id])
-        return req.fetchone()
-
-    def update_special_user(
-        self, key: str, sp_tag: str, sp_tag_style: str, sp_author: str
-    ):
-        self.cur.execute(
-            "UPDATE SPECIAL_USERS SET sp_tag = ?, sp_tag_style = ?, sp_author = ? WHERE sp_send_key = ?",
-            [sp_tag, sp_tag_style, sp_author, key],
-        )
-        self.commit()

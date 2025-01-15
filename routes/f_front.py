@@ -2,10 +2,8 @@ from globals import Db, api, config  # GLOBAL_IMPORT
 from routes.helpers import (
     arrow,
     auth_required,
-    find_keyword_project,
     get_cached_locations,
     get_position,
-    is_shadow_banned,
     request,
     standard_cluster,
 )
@@ -27,9 +25,7 @@ def profile(login, userid):
         if user is None:
             return "", 404
         is_friend = db.is_friend(userid["userid"], user["id"]) is not False
-        is_banned = db.is_banned(user["id"])
         theme = db.get_theme(userid["userid"])
-        hide = is_shadow_banned(user["id"], userid["userid"], db)
         tag = db.get_admin_tag(user_id=user["id"])
         if len(tag):
             user.update({"admintag": db.get_admin_tag(user_id=user["id"])[0]["tag"]})
@@ -39,11 +35,8 @@ def profile(login, userid):
             user["tag"] = ""
     if user is None:
         return "", 404
-    if hide:
-        user["position"] = None
-    else:
-        user["position"] = get_position(user["name"])
-    if user["active"] and user["position"] is None and not hide:
+    user["position"] = get_position(user["name"])
+    if user["active"] and user["position"] is None:
         user["last_active"] = "depuis " + (
             arrow.get(user["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
         ).humanize(locale="FR", only_distance=True)
@@ -54,7 +47,6 @@ def profile(login, userid):
         user=user,
         is_friend=is_friend,
         userid=userid,
-        is_banned=is_banned,
         theme=theme,
         is_admin=userid["admin"],
     )
@@ -64,6 +56,7 @@ def profile(login, userid):
 @auth_required
 def import_friends(userid):
     return render_template("import_friends.html")
+
 
 @app.route("/settings/", methods=["GET", "POST"])
 @auth_required
@@ -178,7 +171,6 @@ def index(userid):
         }
         for cluster in campus_map["allowed"]
     ]
-    print(userid)
     return render_template(
         "index.html",
         map=campus_map[cluster_name],

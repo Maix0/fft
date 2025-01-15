@@ -36,7 +36,7 @@ def add_friend(add, userid):
             failed_friends.append(friend)
     db.close()
     if len(failed_friends):
-        return f"failed_friends: {", ".join(failed_friends)}", 404
+        return f"failed_friends: {', '.join(failed_friends)}", 404
     return "Ok", 200
 
 

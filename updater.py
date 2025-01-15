@@ -11,7 +11,7 @@ if __name__ == "__main__":
             print(f"updating campus {campus}...")
             try:
                 req = requests.get(
-                    f'http://127.0.0.1:{os.environ.get("F42_PORT")}/locations/{config.update_key}/{campus}'
+                    f"http://127.0.0.1:{os.environ.get('F42_PORT')}/locations/{config.update_key}/{campus}"
                 )
                 print(req.status_code)
             except requests.exceptions.RequestException:

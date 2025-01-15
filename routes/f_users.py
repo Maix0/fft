@@ -33,8 +33,6 @@ def settings_profile(userid):
     if info is None:
         return 400
     db = Db(config.db_path)
-    if db.is_banned(userid["userid"]):
-        return "banned", 403
     success = db.set_profile(userid["userid"], dict(info))
     db.close()
     if not success:

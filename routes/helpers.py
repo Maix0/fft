@@ -16,16 +16,10 @@ def proxy_images(url: str, light=False):
     if not url:
         return "/static/img/unknown.jpg"
     if light:
-        return url.replace(
-            "https://cdn.intra.42.fr/", f"/proxy/70x70/"
-        )
+        return url.replace("https://cdn.intra.42.fr/", "/proxy/70x70/")
     if "small" in url or "medium" in url:
-        return url.replace(
-            "https://cdn.intra.42.fr/", f"/proxy/256x256/"
-        )
-    return url.replace(
-        "https://cdn.intra.42.fr/", f"/proxy/512x512/"
-    )
+        return url.replace("https://cdn.intra.42.fr/", "/proxy/256x256/")
+    return url.replace("https://cdn.intra.42.fr/", "/proxy/512x512/")
 
 
 def auth_required(function):
@@ -45,14 +39,12 @@ def auth_required(function):
                 httponly=True,
             )
             return resp
-        if db.is_banned(userid["userid"]):
-            return "You are banned from this website.", 403
         is_admin = db.is_admin(userid["userid"])
         if (not db.is_whitelisted(userid["userid"])) and (not is_admin):
             return "You are not whitelist from this website.", 403
         details = db.get_user_by_id(userid["userid"])
         theme = db.get_theme(userid["userid"])
-        tag = db.get_tag(userid["userid"])
+        tag = db.get_user_tag(userid["userid"])
         is_tutor = db.is_tutors(userid["userid"])
         db.close()
         userid["admin"] = is_admin
@@ -203,16 +195,6 @@ def optimize_locations(data: list[dict]) -> list[dict]:
     return compressed
 
 
-def is_shadow_banned(user: int, offender: int, c_db=None):
-    db = c_db
-    if c_db is None:
-        db = Db(config.db_path)
-    ret = db.is_shadow_banned(user, offender)
-    if c_db is None:
-        db.close()
-    return ret
-
-
 def locs(campus=1):
     status, data = api.get_paged_locations(campus)
     if status == 200:
@@ -242,41 +224,6 @@ def date_relative(date, granularity=None):
     if granularity:
         return arrow.get(date).humanize(locale="fr", granularity=granularity)
     return arrow.get(date).humanize(locale="fr")
-
-
-def get_projects(group=False):
-    db = Db(config.db_path)
-    projects = []
-    if group:
-        projects = db.get_group_projects_list(r)
-    else:
-        projects = db.get_project_list(r)
-    db.close()
-    return projects
-
-
-def get_cached_projects_with_xp():
-    db = Db(config.db_path)
-    projects = db.get_xp_projects_list(r)
-    db.close()
-    return projects
-
-
-def find_keyword_project(keyword: str, group: False) -> list:
-    db = Db(config.db_path)
-    if group:
-        projects = db.search_project_solo(keyword, False)
-    else:
-        projects = db.search_project(keyword)
-    db.close()
-    return projects
-
-
-def does_group_project_exists(slug: str) -> bool:
-    db = Db(config.db_path)
-    ret = db.is_project_a_thing(slug)
-    db.close()
-    return ret
 
 
 def get_cached_user_data(user):
