@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS USERS
 	lang         VARCHAR(3) DEFAULT 'fr',
 	active       TIMESTAMP  DEFAULT 0,
 	campus       INTEGER    DEFAULT 1,
+	note		 TEXT		DEFAULT "",
 	tag          TEXT       DEFAULT NULL
 );
 

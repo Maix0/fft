@@ -28,6 +28,8 @@ def profile(login, userid):
             return "", 404
         is_friend = db.is_friend(userid["userid"], user["id"]) is not False
         is_banned = db.is_banned(user["id"])
+        print(userid)
+        is_tut = userid["is_tutor"]
         theme = db.get_theme(userid["userid"])
         hide = is_shadow_banned(user["id"], userid["userid"], db)
         tag = db.get_admin_tag(user_id=user["id"])
@@ -57,6 +59,7 @@ def profile(login, userid):
         is_banned=is_banned,
         theme=theme,
         is_admin=userid["admin"],
+        is_tut=is_tut,
     )
 
 
@@ -226,6 +229,18 @@ def friends_route(userid):
     db.close()
     return render_template("friends.html", friends=friend_list, theme=theme, add=True)
 
+
+@app.route("/profile/tutors/setnote", methods=["POST"])
+@auth_required
+def add_whilelist(userid):
+    if not userid["is_tutor"]:
+        return "Not authorized", 401
+    with Db() as db:
+        user_id = request.form["user_id"].strip().lower()
+        if user_id == 0:
+            return "Login does not exist", 404
+        db.set_note(user_id=user_id, note=request.form["note"])
+    return ""
 
 @app.route("/tutors/")
 @auth_required

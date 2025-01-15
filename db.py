@@ -520,6 +520,13 @@ class Db:
         )
         return True if req.fetchone() else False
 
+    def set_note(self, user_id: int, note: str):
+        req = self.cur.execute("UPDATE USERS SET note = ? WHERE id = ?", [note, user_id])
+        res = req.fetchone()
+        if res is None:
+            return False
+        return res
+
     # Admin
     def is_admin(self, user_id: int):
         req = self.cur.execute("SELECT * FROM PERMISSIONS WHERE user_id = ?", [user_id])
