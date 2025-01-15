@@ -103,7 +103,7 @@
 							{%- set relation = '' -%}
 							{%- set currently_in_piscine = y in locations and (locations[y]['user']['pool_month'], locations[y]['user']['pool_year']) in piscine_date -%}
 							{%- set in_piscine_cluster = actual_cluster in piscine -%}
-							{%- if y in locations and not locations[y]['user']['tutors'] and currently_in_piscine != in_piscine_cluster -%}
+							{%- if y in locations and locations[y]['user']['id'] not in tutors and currently_in_piscine != in_piscine_cluster -%}
 								{%- set relation = 'wrong-cluster' -%}
 							{%- endif -%}
 							{%- if focus and focus == y %}
