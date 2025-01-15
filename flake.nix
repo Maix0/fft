@@ -94,6 +94,11 @@
             cfg = config.services.fft;
           in {
             options.services.fft = {
+              extraBindMounts = {
+                types = types.attrs;
+                default = {};
+                description = "Extra bind mounts for the containers";
+              };
               package = mkOption {
                 type = types.package;
                 default = self.packages.${pkgs.system}.fft;
@@ -229,16 +234,18 @@
 
               containers.fft = {
                 privateNetwork = false; # TODO: maybe change it ?
-                bindMounts = {
-                  "/env" = {
-                    hostPath = "${cfg.envFile}";
-                    isReadOnly = true;
-                  };
-                  "/etc/resolv.conf" = {
-                    hostPath = "/etc/resolv.conf";
-                    isReadOnly = true;
-                  };
-                };
+                bindMounts =
+                  {
+                    "/env" = {
+                      hostPath = "${cfg.envFile}";
+                      isReadOnly = true;
+                    };
+                    "/etc/resolv.conf" = {
+                      hostPath = "/etc/resolv.conf";
+                      isReadOnly = true;
+                    };
+                  }
+                  // cfg.extraBindMounts;
                 autoStart = true;
                 hostAddress = "192.168.100.2";
                 config = {
