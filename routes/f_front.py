@@ -28,7 +28,6 @@ def profile(login, userid):
             return "", 404
         is_friend = db.is_friend(userid["userid"], user["id"]) is not False
         is_banned = db.is_banned(user["id"])
-        print(userid)
         is_tut = userid["is_tutor"]
         theme = db.get_theme(userid["userid"])
         hide = is_shadow_banned(user["id"], userid["userid"], db)
@@ -51,6 +50,12 @@ def profile(login, userid):
         ).humanize(locale="FR", only_distance=True)
     else:
         user["last_active"] = ""
+    if userid["is_tutor"]:
+        user["notedit"] = "\\n".join(user["note"].split("\r\n"))
+        user["note"] = "<br>".join(user["note"].split("\n"))
+    else:
+        user["notedit"] = ""
+        user["note"] = ""
     return render_template(
         "profile.html",
         user=user,

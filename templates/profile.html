@@ -60,10 +60,10 @@
 							{% endif %}
 						</span>
 						{% if user.note and is_tut %}
-							<h1>Notes tut : {{ user.note }}</h1>
+							<p>Notes tut : {{ user.note | safe }}</p>
 						{% endif %}
 						{% if is_tut %}
-							<button class="btn btn-info btn-sm" onclick="openEditNote({{ user.id }} , '{{ user.note }}')">Edit note</button>
+							<button class="btn btn-info btn-sm" onclick="openEditNote({{ user.id }}, '{{ user.notedit }}')">Edit note</button>
 						{% endif %}
 						<span class="text-left">
 							{% if userid.userid != user.id %}
@@ -150,8 +150,6 @@
 			})
 		function openEditNote(user_id, note)
 		{
-			console.log(user_id)
-			console.log(note)
 			let modalElem = document.querySelector("#editnotemodal");
 			if (!modalElem)
 				return ;
