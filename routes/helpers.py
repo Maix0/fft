@@ -17,14 +17,14 @@ def proxy_images(url: str, light=False):
         return "/static/img/unknown.jpg"
     if light:
         return url.replace(
-            "https://cdn.intra.42.fr/users/", f"{config.domain}/proxy/70x70/"
+            "https://cdn.intra.42.fr/users/", f"/proxy/70x70/"
         )
     if "small" in url or "medium" in url:
         return url.replace(
-            "https://cdn.intra.42.fr/users/", f"{config.domain}/proxy/256x256/"
+            "https://cdn.intra.42.fr/users/", f"/proxy/256x256/"
         )
     return url.replace(
-        "https://cdn.intra.42.fr/users/", f"{config.domain}/proxy/512x512/"
+        "https://cdn.intra.42.fr/users/", f"/proxy/512x512/"
     )
 
 
