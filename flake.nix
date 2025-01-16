@@ -402,7 +402,7 @@
                           after = ["network.target"];
                           enable = true;
                           environment = {
-                            F42_PORT = cfg.port;
+                            F42_PORT = toString cfg.port;
                             F42_UPDATE_KEY = cfg.updateToken;
                           };
                           serviceConfig = {
