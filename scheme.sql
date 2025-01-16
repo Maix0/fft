@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS USERS
 	lang         VARCHAR(3) DEFAULT 'fr',
 	active       TIMESTAMP  DEFAULT 0,
 	campus       INTEGER    DEFAULT 1,
-	tag          TEXT       DEFAULT NULL
+	tag          TEXT       DEFAULT NULL,
+	custom_image_link          TEXT       DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS COOKIES

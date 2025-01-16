@@ -26,6 +26,7 @@ def admin(userid):
         tags = db.get_all_user_tags()
         tutor_station = db.get_all_tutor_stations()
         piscines_dates = db.get_all_piscine_dates()
+        custom_images = db.get_all_custom_images()
     return render_template(
         "admin.html",
         user=userid,
@@ -36,6 +37,7 @@ def admin(userid):
         tutor_stations=tutor_station,
         tags=tags,
         piscines_dates=piscines_dates,
+        custom_images=custom_images,
     )
 
 
@@ -133,6 +135,38 @@ def remove_tutor_station(ban_id, csrf, userid):
         return "Please refresh and try again", 401
     with Db() as db:
         db.remove_tutor_station(int(ban_id))
+    return ""
+
+
+##
+## CUSTOM IMAGE
+##
+
+
+@app.route("/admin/add/custom_image", methods=["POST"])
+@auth_required
+def add_custom_image(userid):
+    if not userid["admin"]:
+        return "Not authorized", 401
+    if not verify_csrf(request.form["csrf"]):
+        return "Please refresh and try again", 401
+    with Db() as db:
+        login = request.form["login"].strip().lower()
+        user = db.get_user_profile(login, api)
+        link = request.form["link"].strip()
+        db.set_custom_image(userid=user["id"], link=link)
+    return ""
+
+
+@app.route("/admin/remove/custom_image/<int:id>/<csrf>")
+@auth_required
+def remove_custom_image(id, csrf, userid):
+    if not userid["admin"]:
+        return "Not authorized", 401
+    if not verify_csrf(csrf):
+        return "Please refresh and try again", 401
+    with Db() as db:
+        db.set_custom_image(userid=id, link=None)
     return ""
 
 

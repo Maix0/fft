@@ -87,11 +87,12 @@ class Db:
             else god("USERS", "active", uid)
         )
         tag = god("USERS", "tag", uid)
+        custom_image_link = god("USERS", "custom_image_link", uid)
         if not campus or type(campus) is not int:
             campus = 1
         self.cur.execute(
-            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus, tag) "
-            f"VALUES(?, ?, ?, ?, ?, {active}, {campus}, (SELECT COALESCE({tag}, NULL)))",
+            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus, tag, custom_image_link) "
+            f"VALUES(?, ?, ?, ?, ?, {active}, {campus}, (SELECT COALESCE({tag}, NULL)),  (SELECT COALESCE({custom_image_link}, NULL)))",
             [
                 uid,
                 user_data["login"],
@@ -519,4 +520,20 @@ class Db:
 
     def get_all_admins(self):
         req = self.cur.execute("SELECT * FROM PERMISSIONS")
+        return req.fetchall()
+    
+    #
+    # CUSTOM IMAGE 
+    #
+
+    def get_custom_image(self, userid: int):
+        req = self.cur.execute("SELECT custom_image_link FROM  USERS WHERE id = ?", [user_id])
+        return req.fetchone()
+
+    def set_custom_image(self, userid: int, link: str):
+        req = self.cur.execute("UPDATE USERS SET custom_image_link = ? WHERE id = ?", [link, userid])
+        return req.fetchall()
+
+    def get_all_custom_images(self):
+        req = self.cur.execute("SELECT * FROM USERS WHERE custom_image_link IS NOT NULL")
         return req.fetchall()

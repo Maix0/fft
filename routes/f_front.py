@@ -106,6 +106,8 @@ def index(userid):
     piscines = [x["cluster"] for x in db.get_piscines(userid["campus"])]
     silents = [x["cluster"] for x in db.get_silents(userid["campus"])]
     piscine_date = [(x["month"], x["year"]) for x in db.get_all_piscine_dates()]
+    custom_images = {x["name"]: x["custom_image_link"] for x in db.get_all_custom_images()}
+
     tutor_stations = [
         x["station"]
         for x in db.get_all_tutor_stations()
@@ -134,6 +136,8 @@ def index(userid):
             close_friend = user_id in [e["has"] for e in friends if e["relation"] == 1]
         admin = user_id in admin_ids
         whitelist = user_id in whitelist_ids
+        if user["user"]["login"] in custom_images:
+            user["user"]["image"]["versions"]["small"] = custom_images[user["user"]["login"]]
         location_map[user["host"]] = {
             **user,
             "me": user_id == userid["userid"],
@@ -197,7 +201,6 @@ def friends_route(userid):
     friend_list = db.get_friends(userid["userid"])
     for friend in friend_list:
         friend.update({"admin": {"tag": db.get_admin_tag(friend["id"])}})
-        print(type(friend["admin"]["tag"]))
         if len(friend["admin"]["tag"]) == 0:
             friend["admin"]["tag"] = ""
         else:

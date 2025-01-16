@@ -36,7 +36,7 @@
 			{% for friend in friends %}
 				<div id="case-{{ friend.name }}" class="card shadow m-2 pl-fix card-size grow"
 				     onclick="openFriend('{{ friend.name }}', true)">
-					<img src="{{ proxy_images(friend.image_medium) }}" class="m-1 card-img-top card-img-size"
+					<img src="{{ proxy_images(friend.custom_image_link if friend.custom_image_link else friend.image_medium) }}" class="m-1 card-img-top card-img-size"
 					     alt="{{ friend.name }}'s image">
 					<div class="card-body">
 						<span class="badge badge-sm align-vertical bg-info text-dark">{{ friend.tag | safe }}</span>

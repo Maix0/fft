@@ -17,7 +17,7 @@
 		<div class="p-5 mb-4 bg-light-subtle rounded-3 shadow-sm">
 			<div class="container-fluid py-5">
 				<div class="mb-4 text-center">
-					<img class="rounded-pill profile-pic" style="height:9rem;" src="{{ user.image_medium }}"
+					<img class="rounded-pill profile-pic" style="height:9rem;" src="{{ user.custom_image_link if user.custom_image_link else user.image_medium }}"
 					     alt="{{ user.name }}'s pic">
 					<div class="display-inline-grid ms-3">
 						<h1 class="display-5 fw-bold">
