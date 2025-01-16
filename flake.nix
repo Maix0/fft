@@ -67,7 +67,7 @@
               cp ./scrap_issues.py $out/opt
 
               mkdir -p $out/bin
-              cat <<EOF >$out/bin/fft
+              cat <<EOF >$out/bin/scrap
               #!/bin/sh
               cd $out/opt
               exec ${python.withPackages (pypkgs:
