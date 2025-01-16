@@ -400,9 +400,7 @@
                           wantedBy = ["multi-user.target"];
                           requires = ["network.target"];
                           after = ["network.target"];
-                          enable = false;
-                          script = ''
-                          '';
+                          enable = true;
                           environment = {
                             F42_PORT = cfg.port;
                             F42_UPDATE_KEY = cfg.updateToken;
@@ -424,18 +422,18 @@
                         enable = true;
                         wantedBy = ["multi-user.target"];
                         requires = ["network.target"];
-                        after = ["network.target" "fft-1.service"];
-                        timerConfig = {
-                          "OnUnitActiveSec" = "1d";
-                          "OnBootSec" = "10m";
-                        };
+                        after = ["fft-1.service"];
+                        timerConfig = cfg.scraping.timer;
                       };
                       fft-update-tutors = mkIf cfg.scraping.enable {
                         enable = true;
                         wantedBy = ["multi-user.target"];
                         requires = ["network.target"];
                         after = ["network.target" "fft-1.service"];
-                        timerConfig = cfg.scraping.timer;
+                        timerConfig = {
+                          "OnUnitActiveSec" = "1d";
+                          "OnBootSec" = "10m";
+                        };
                       };
                       fft-proxy-cleanup = {
                         enable = true;
