@@ -19,7 +19,7 @@ def create_issue(pc, issue_type, userid):
 
 
 @app.route("/addissue/<token>/<pc>/<int:issue_type>")
-def create_issue_bot(token, pc, issue_type, userid):
+def create_issue_bot(token, pc, issue_type):
     if token != config.update_key:
         return "Bad token", 400
     db = Db(config.db_path)
