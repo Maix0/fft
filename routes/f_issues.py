@@ -11,9 +11,19 @@ app = Blueprint("issues", __name__, template_folder="templates")
 @auth_required
 def create_issue(pc, issue_type, userid):
     db = Db(config.db_path)
-    if db.is_banned(userid["userid"]):
-        return "banned", 403
     success = db.create_issue(userid["userid"], pc, int(issue_type))
+    db.close()
+    if not success:
+        return "", 400
+    return "", 200
+
+
+@app.route("/addissue/<token>/<pc>/<int:issue_type>")
+def create_issue_bot(token, pc, issue_type, userid):
+    if token != config.update_key:
+        return "Bad token", 400
+    db = Db(config.db_path)
+    success = db.create_issue(0, pc, int(issue_type))
     db.close()
     if not success:
         return "", 400

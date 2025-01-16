@@ -24,6 +24,7 @@
                 requests
                 arrow
                 sentry-sdk
+                beautifulsoup4
               ]))
           pkgs.black
           pkgs.ruff
@@ -54,6 +55,28 @@
                 ])}/bin/python ./app.py
               EOF
               chmod +x $out/bin/fft
+            '';
+          };
+
+        scrap = with pkgs.python3.pkgs;
+          pkgs.stdenvNoCC.mkDerivation {
+            name = "scrap";
+            src = ./.;
+            installPhase = ''
+              mkdir -p $out/opt
+              cp ./scrap_issues.py $out/opt
+
+              mkdir -p $out/bin
+              cat <<EOF >$out/bin/fft
+              #!/bin/sh
+              cd $out/opt
+              exec ${python.withPackages (pypkgs:
+                with pypkgs; [
+                  beautifulsoup4
+                  requests
+                ])}/bin/python ./scrap_issues.py
+              EOF
+              chmod +x $out/bin/scrap
             '';
           };
         updater = with pkgs.python3.pkgs;
@@ -144,6 +167,21 @@
                 type = types.str;
                 description = "domain to be used";
                 default = "localhost";
+              };
+              scraping = {
+                enable = mkEnableOption "Scraping of issues from another instance";
+                package = mkOption {
+                  type = types.package;
+                  default = self.packages.${pkgs.system}.scrap;
+                };
+                timer = mkOption {
+                  type = types.attrsOf types.str;
+                  description = "will be merged into a systemd.timers.<name>.timerConfig";
+                  default = {
+                    "OnUnitActiveSec" = "1h";
+                    "OnBootSec" = "1h";
+                  };
+                };
               };
               backup = {
                 enable = mkEnableOption "Backup of database";
@@ -358,6 +396,22 @@
                             F42_DOMAIN = cfg.domain;
                           };
                         };
+                        fft-scrap = mkIf cfg.scraping.enable {
+                          wantedBy = ["multi-user.target"];
+                          requires = ["network.target"];
+                          after = ["network.target"];
+                          enable = false;
+                          script = ''
+                          '';
+                          environment = {
+                            F42_PORT = cfg.port;
+                            F42_UPDATE_KEY = cfg.updateToken;
+                          };
+                          serviceConfig = {
+                            EnvironmentFile = "/env";
+                            ExecStart = "${cfg.scraping.package}/bin/scrap";
+                          };
+                        };
                       }
                       // (listToAttrs (map
                         (idx: {
@@ -366,7 +420,7 @@
                         }) (lib.range 1 cfg.instanceCount)));
 
                     timers = {
-                      fft-update-tutors = {
+                      fft-scrap = {
                         enable = true;
                         wantedBy = ["multi-user.target"];
                         requires = ["network.target"];
@@ -375,6 +429,13 @@
                           "OnUnitActiveSec" = "1d";
                           "OnBootSec" = "10m";
                         };
+                      };
+                      fft-update-tutors = mkIf cfg.scraping.enable {
+                        enable = true;
+                        wantedBy = ["multi-user.target"];
+                        requires = ["network.target"];
+                        after = ["network.target" "fft-1.service"];
+                        timerConfig = cfg.scraping.timer;
                       };
                       fft-proxy-cleanup = {
                         enable = true;

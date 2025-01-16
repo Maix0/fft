@@ -527,7 +527,7 @@ class Db:
     #
 
     def get_custom_image(self, userid: int):
-        req = self.cur.execute("SELECT custom_image_link FROM  USERS WHERE id = ?", [user_id])
+        req = self.cur.execute("SELECT custom_image_link FROM  USERS WHERE id = ?", [userid])
         return req.fetchone()
 
     def set_custom_image(self, userid: int, link: str):
