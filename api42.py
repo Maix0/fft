@@ -149,7 +149,7 @@ class Api:
             return {"error": r.text}, r.status_code, dict(r.headers)
 
     def get_unknown_user(self, user_name: str) -> tuple[int, dict]:
-        data, status, header = self.get(f"/users/{user_name}")
+        data, status, _ = self.get(f"/users/{user_name}")
         if status == 200:
             return 200, data
         return status, data

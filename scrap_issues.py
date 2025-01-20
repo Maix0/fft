@@ -31,7 +31,7 @@ for cluster in clusters:
         soup = BeautifulSoup(doc.text, "html.parser")
         dead = soup.find_all("td", class_="dead")
         issue = soup.find_all("td", class_="attention")
-        
+
         for e in dead:
             all_issues[e.attrs["data-pos"]] = 1
         for e in issue:

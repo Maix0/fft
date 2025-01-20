@@ -106,7 +106,9 @@ def index(userid):
     piscines = [x["cluster"] for x in db.get_piscines(userid["campus"])]
     silents = [x["cluster"] for x in db.get_silents(userid["campus"])]
     piscine_date = [(x["month"], x["year"]) for x in db.get_all_piscine_dates()]
-    custom_images = {x["name"]: x["custom_image_link"] for x in db.get_all_custom_images()}
+    custom_images = {
+        x["name"]: x["custom_image_link"] for x in db.get_all_custom_images()
+    }
 
     tutor_stations = [
         x["station"]
@@ -137,7 +139,9 @@ def index(userid):
         admin = user_id in admin_ids
         whitelist = user_id in whitelist_ids
         if user["user"]["login"] in custom_images:
-            user["user"]["image"]["versions"]["small"] = custom_images[user["user"]["login"]]
+            user["user"]["image"]["versions"]["small"] = custom_images[
+                user["user"]["login"]
+            ]
         location_map[user["host"]] = {
             **user,
             "me": user_id == userid["userid"],
