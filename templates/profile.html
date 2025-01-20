@@ -13,6 +13,30 @@
 	<link href="/static/css/profile.css?v={{ version }}" rel="stylesheet">
 {% endblock %}
 {% block content %}
+<div class="modal fade" id="editnotemodal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="POST" id="editnote">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5">Edit note</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-floating mb-3">
+						<textarea name="note" class="form-control" id="inputnote" rows="4"></textarea>
+						<label for="inputnote">Note :</label>
+					</div>
+				</div>
+				<input type="hidden" name="user_id">
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					<button type="submit" class="btn btn-primary">Confirmer</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 	<div class="container mt-2">
 		<div class="p-5 mb-4 bg-light-subtle rounded-3 shadow-sm">
 			<div class="container-fluid py-5">
@@ -35,6 +59,12 @@
 								<a class="fa-solid fa-users-viewfinder" href="/goto/{{ user.position }}"></a>
 							{% endif %}
 						</span>
+						{% if user.note and is_tut %}
+							<p>Notes tut : {{ user.note | safe }}</p>
+						{% endif %}
+						{% if is_tut %}
+							<button class="btn btn-info btn-sm" onclick="openEditNote({{ user.id }}, '{{ user.notedit }}')">Edit note</button>
+						{% endif %}
 						<span class="text-left">
 							{% if userid.userid != user.id %}
 								<button {{ 'hidden' if is_friend else '' }} type="button"
@@ -118,5 +148,28 @@
 				addLocalFriend.hidden = false;
 				removeLocalFriend.hidden = true;
 			})
+		function openEditNote(user_id, note)
+		{
+			let modalElem = document.querySelector("#editnotemodal");
+			if (!modalElem)
+				return ;
+			modalElem.querySelector("input[name='user_id']").value = user_id.toString();
+			modalElem.querySelector("textarea[name='note']").value = note;
+			let modal = new bootstrap.Modal(modalElem).show();
+		}
+
+		document.getElementById('editnote').addEventListener('submit', function (event) {
+			event.preventDefault();
+
+			const formData = new FormData(event.target);
+
+			fetch('/profile/tutors/setnote', {
+				method: 'POST',
+				body: formData
+			}).then(async response => {
+				triggerToast(await response.text(), response.status === 200);
+				location.reload();
+			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
+		});
 	</script>
 {% endblock %}

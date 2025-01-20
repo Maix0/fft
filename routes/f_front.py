@@ -42,6 +42,14 @@ def profile(login, userid):
         ).humanize(locale="FR", only_distance=True)
     else:
         user["last_active"] = ""
+    if userid["is_tutor"]:
+        user["notedit"] = (
+            user["note"].replace("\n", "\\n").replace("\r", "").replace("'", "\\'")
+        )
+        user["note"] = user["note"].replace("\n", "<br>")
+    else:
+        user["notedit"] = ""
+        user["note"] = ""
     return render_template(
         "profile.html",
         user=user,
@@ -49,6 +57,7 @@ def profile(login, userid):
         userid=userid,
         theme=theme,
         is_admin=userid["admin"],
+        is_tut=userid["is_tutor"],
     )
 
 
@@ -224,6 +233,19 @@ def friends_route(userid):
     friend_list = sorted(friend_list, key=lambda d: 0 if d["position"] else 1)
     db.close()
     return render_template("friends.html", friends=friend_list, theme=theme, add=True)
+
+
+@app.route("/profile/tutors/setnote", methods=["POST"])
+@auth_required
+def add_whilelist(userid):
+    if not userid["is_tutor"]:
+        return "Not authorized", 401
+    with Db() as db:
+        user_id = request.form["user_id"].strip().lower()
+        if user_id == 0:
+            return "Login does not exist", 404
+        db.set_note(user_id=user_id, note=request.form["note"])
+    return ""
 
 
 @app.route("/tutors/")

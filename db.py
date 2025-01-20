@@ -164,19 +164,6 @@ class Db:
         )
         return query.fetchall()
 
-    def get_notifications_friends(self, who: int):
-        query = self.cur.execute(
-            "SELECT * FROM FRIENDS JOIN USERS ON USERS.id = FRIENDS.has WHERE who = ? AND relation = 1",
-            [who],
-        )
-        ret = query.fetchall()
-        r_ret = []
-        for friend in ret:
-            tg = self.has_notifications(friend["has"])
-            if tg and tg["enabled"] == 1 and self.is_friend(friend["has"], who) == 1:
-                r_ret.append({"id": friend["has"], "tg": tg})
-        return r_ret
-
     def is_friend(self, who: int, has: int) -> bool:
         req = self.cur.execute(
             "SELECT relation FROM FRIENDS WHERE who = ? AND has = ?", [who, has]
@@ -371,14 +358,14 @@ class Db:
         query = self.cur.execute("SELECT 1 FROM WHITELIST WHERE user_id = ?", [user_id])
         return query.fetchone() is not None
 
-    def add_whitelist(self, user_id: int, user_login: str) -> bool:
+    def add_whitelist(self, user_id: int, user_login: str):
         self.cur.execute(
             "INSERT INTO WHITELIST(user_id, user_login) VALUES(?, ?)",
             [user_id, user_login],
         )
         self.commit()
 
-    def remove_whitelist(self, id: int) -> bool:
+    def remove_whitelist(self, id: int):
         self.cur.execute("DELETE FROM WHITELIST WHERE id = ?", [id])
         self.commit()
 
@@ -497,6 +484,15 @@ class Db:
             "SELECT id, name, tag FROM USERS WHERE tag IS NOT NULL", []
         )
         return req.fetchall()
+
+    def set_note(self, user_id: int, note: str):
+        req = self.cur.execute(
+            "UPDATE USERS SET note = ? WHERE id = ?", [note, user_id]
+        )
+        res = req.fetchone()
+        if res is None:
+            return False
+        return res
 
     # Admin
     def is_admin(self, user_id: int):

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS USERS
 	active       TIMESTAMP  DEFAULT 0,
 	campus       INTEGER    DEFAULT 1,
 	tag          TEXT       DEFAULT NULL,
+	note		 TEXT		DEFAULT "",
 	custom_image_link          TEXT       DEFAULT NULL
 );
 
