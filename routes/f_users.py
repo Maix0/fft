@@ -20,9 +20,14 @@ def getuser(login, userid):
             return "", 404
         is_friend = db.is_friend(userid["userid"], user["id"])
         user["admin"] = db.is_admin(user["id"])
+        custom_img = db.get_custom_image(user["id"])
     user["is_friend"] = is_friend
     user["position"] = get_position(user["name"])
-    user["image"] = proxy_images(user["image"])
+    if (custom_img["custom_image_link"]):
+        user["image"] = custom_img["custom_image_link"]
+    else:
+        user["image"] = proxy_images(user["image"])
+    
     return dict(user)
 
 
