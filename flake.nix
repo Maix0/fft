@@ -376,7 +376,7 @@
                           wantedBy = ["multi-user.target"];
                           requires = ["network.target"];
                           after = ["network.target"];
-                          enable = false;
+                          enable = true;
                           script = ''
                             ${pkgs.curl}/bin/curl -L http://localhost:${toString cfg.port}/admin/update/tutors/${lib.escapeShellArg cfg.updateToken}
                           '';
@@ -388,7 +388,7 @@
                           wantedBy = ["multi-user.target"];
                           requires = ["network.target"];
                           after = ["network.target"];
-                          enable = false;
+                          enable = true;
                           script = ''
                             rm -rf /tmp/fft-proxy-dir
                           '';
