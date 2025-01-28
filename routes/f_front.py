@@ -236,9 +236,7 @@ def friends_route(userid):
     print(user_list)
     user_list = sorted(user_list, key=lambda d: d["name"])
     user_list = sorted(user_list, key=lambda d: 0 if d["relation"] == 1 else 1)
-    user_list = sorted(
-        user_list, key=lambda d: 0 if d["position"] else 1
-    )
+    user_list = sorted(user_list, key=lambda d: 0 if d["position"] else 1)
     return render_template(
         "links.html",
         relation_name="Friends (All)",
