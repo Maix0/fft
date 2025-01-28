@@ -28,10 +28,10 @@ function setButton(waiting, button_descriptor) {
 	button.disabled = waiting;
 }
 
-function addFriend(name, button_descriptor, auto_reload = false) {
+function addLink(name, relation_id, button_descriptor, auto_reload = false) {
 	return new Promise((resolve) => {
 		setButton(true, button_descriptor);
-		fetch('/friends/add/' + name).then((response) => {
+		fetch(`/links/add/${name}/${relation_id}`).then((response) => {
 			setButton(false, button_descriptor);
 			if (response.status === 200) {
 				triggerToast(`${name} est ajouté à votre liste de contacts.<br>` +
@@ -47,13 +47,13 @@ function addFriend(name, button_descriptor, auto_reload = false) {
 	});
 }
 
-function deleteFriend(friend_name, button_descriptor, auto_reload = false) {
+function deleteLink(name, button_descriptor, auto_reload = false) {
 	return new Promise((resolve) => {
 		setButton(true, button_descriptor);
-		fetch('/friends/remove/' + friend_name).then((response) => {
+		fetch(`/links/remove/${name}`).then((response) => {
 			setButton(false, button_descriptor);
 			if (response.status === 200) {
-				triggerToast(friend_name + ' a été supprimé de votre liste de contact', true);
+				triggerToast(name + ' a été supprimé de votre liste de contact', true);
 				if (auto_reload)
 					setTimeout(() => {
 						location.reload()
@@ -66,11 +66,10 @@ function deleteFriend(friend_name, button_descriptor, auto_reload = false) {
 	});
 }
 
-function setRelation(friend_name, relation, button_descriptor, auto_reload = false) {
-	console.log(relation)
+function setRelation(name, relation, button_descriptor, auto_reload = false) {
 	return new Promise((resolve) => {
 		setButton(true, button_descriptor);
-		fetch('/friends/set_relation/' + friend_name + '/' + relation).then((response) => {
+		fetch(`/links/set_relation/${name}/${relation}`).then((response) => {
 			setButton(false, button_descriptor);
 			if (response.status === 200) {
 				triggerToast("Relation modifiée avec succès", true);
@@ -107,7 +106,7 @@ function getURLPath(str) {
 	return a.pathname.substr(1)
 }
 
-function openFriend(name, auto_reload = false) {
+function openLink(name, auto_reload = false) {
 	function config_bio(data) {
 		function set_link(elem, data, path = false) {
 			if (!data) {
@@ -168,12 +167,27 @@ function openFriend(name, auto_reload = false) {
 				let modal_name = openFriendModalName.querySelector('.name');
 				let send_msg = document.getElementById('send_msg');
 
-				openFriendLabelAddFriend.hidden = data.is_friend !== false;
-				openFriendLabelDeleteFriend.hidden = data.is_friend === false;
-				addCloseFriend.hidden = data.is_friend === false ? false : data.is_friend !== 0;
-				removeCloseFriend.hidden = data.is_friend === false || data.is_friend !== 1;
-				if (data.is_friend === false)
+				console.log(data);
+				console.log(`relation = ${data.relation} (${typeof(data.relation)})`)
+				if (data.relation === null) {
 					addCloseFriend.hidden = true;
+					openFriendLabelDeleteFriend.hidden = true;
+					addCloseFriend.hidden = true;
+					removeCloseFriend.hidden = true;
+				}
+				if (data.relation !== null)
+				{
+					openFriendLabelDeleteFriend.hidden = false;
+					openFriendLabelAddFriend.hidden = true;
+					addCloseFriend.hidden = data.relation === 1;
+					removeCloseFriend.hidden = data.relation === 0;
+					if (data.relation !== 0 && data.relation !== 1)
+					{
+						addCloseFriend.hidden = true;
+						removeCloseFriend.hidden = true;
+					}
+
+				}
 
 				config_bio(data)
 				openFriendShowCluster.disabled = !(data['position'] !== null);
@@ -210,10 +224,10 @@ function openFriend(name, auto_reload = false) {
 					}
 				}
 				openFriendLabelAddFriend.onclick = () => {
-					addFriend(name, '#openFriendLabelAddFriend', auto_reload)
+					addLink(name, 0, '#openFriendLabelAddFriend', auto_reload, 0)
 				}
 				openFriendLabelDeleteFriend.onclick = () => {
-					deleteFriend(name, '#openFriendLabelDeleteFriend', auto_reload)
+					deleteLink(name, '#openFriendLabelDeleteFriend', auto_reload)
 				}
 				let changeRelation = async (relation, hide) => {
 					const ret = await setRelation(name, relation, '#openFriendLabelAddBestFriend')
@@ -281,7 +295,7 @@ function isTouchDevice() {
 			return;
 		}
 		if (await does_user_exists(login) === 200)
-			location.href = '/profile/' + login;
+			location.href = `/profile/${login}`;
 		else
 			triggerToast("L'utilisateur est introuvable", false);
 	}
@@ -298,17 +312,6 @@ function isTouchDevice() {
 		});
 	}
 
-	/*
-	globalAddFriend.addEventListener('click', async () => {
-		let val = globalSearchInput.value.trim();
-
-		if (val === "") {
-			globalSearchInput.focus();
-			return;
-		}
-		await addFriend(globalSearchInput.value, '#globalAddFriend', true);
-	});
-	*/
 	function search_text(text, callback) {
 		fetch('/search/' + encodeURIComponent(text) + "/0").then((response) => {
 			response.json().then((json) => {
@@ -340,8 +343,7 @@ function isTouchDevice() {
 							}
 						})
 						if (found === 0)
-							triggerToast(`Aucun résultat pour ${val}`
-							)
+							triggerToast(`Aucun résultat pour ${val}`)
 					});
 				}
 			}
@@ -384,24 +386,3 @@ function isTouchDevice() {
 	}
 })();
 
-
-// Send message
-(() => {
-	let msg_form = document.getElementById('sendMessageForm');
-	if (!msg_form) return;
-	msg_form.addEventListener('submit', (e) => {
-		e.preventDefault();
-		let form_data = new FormData(msg_form);
-		fetch('/messages/send/', {
-			method: 'POST',
-			body: form_data
-		}).then(async (response) => {
-			if (response.status === 200) {
-				triggerToast('Message envoyé avec succès !', true);
-				document.getElementById('sendMessageModal').querySelector('.btn-close').click();
-			} else {
-				triggerToast(`Une erreur s'est produite ! ${await response.text()}`);
-			}
-		})
-	});
-})();

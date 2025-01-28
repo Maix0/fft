@@ -24,7 +24,7 @@ def profile(login, userid):
         user = db.get_user_profile(login, api)
         if user is None:
             return "", 404
-        is_friend = db.is_friend(userid["userid"], user["id"]) is not False
+        link_relation = db.is_link(userid["userid"], user["id"])
         theme = db.get_theme(userid["userid"])
         tag = db.get_admin_tag(user_id=user["id"])
         if len(tag):
@@ -53,7 +53,7 @@ def profile(login, userid):
     return render_template(
         "profile.html",
         user=user,
-        is_friend=is_friend,
+        link_relation=link_relation,
         userid=userid,
         theme=theme,
         is_admin=userid["admin"],
@@ -99,7 +99,7 @@ def index(userid):
     if campus_id not in maps.available:
         db.close()
         return render_template("campus_refresh.html", campus_id=campus_id)
-    friends = db.get_friends(userid["userid"])
+    links = db.get_all_links(userid["userid"])
     issues = db.get_issues()
     admins = db.get_all_admins()
     whitelists = db.get_all_whitelist()
@@ -141,10 +141,10 @@ def index(userid):
     # TODO: optimize this
     for user in cache_tab:
         user_id = user["user"]["id"]
-        friend, close_friend = False, False
-        friend = user_id in [e["has"] for e in friends]
-        if friend:
-            close_friend = user_id in [e["has"] for e in friends if e["relation"] == 1]
+        all_links = {e["has"]: e for e in links}
+        relation = None
+        if user_id in all_links:
+            relation = all_links[user_id]["relation"]
         admin = user_id in admin_ids
         whitelist = user_id in whitelist_ids
         if user["user"]["login"] in custom_images:
@@ -154,8 +154,7 @@ def index(userid):
         location_map[user["host"]] = {
             **user,
             "me": user_id == userid["userid"],
-            "friend": friend,
-            "close_friend": close_friend,
+            "relation": relation,
             "admin": admin,
             "whitelist": whitelist,
             "pool": False,
@@ -211,28 +210,43 @@ def index(userid):
 def friends_route(userid):
     db = Db(config.db_path)
     theme = db.get_theme(userid["userid"])
-    friend_list = db.get_friends(userid["userid"])
-    for friend in friend_list:
-        friend.update({"admin": {"tag": db.get_admin_tag(friend["id"])}})
-        if len(friend["admin"]["tag"]) == 0:
-            friend["admin"]["tag"] = ""
+    links_list = db.get_all_links(userid["userid"])
+    user_list = []
+    for link in links_list:
+        if not (link["relation"] == 1 or link["relation"] == 0):
+            continue
+        link.update({"admin": {"tag": db.get_admin_tag(link["id"])}})
+        if len(link["admin"]["tag"]) == 0:
+            link["admin"]["tag"] = ""
         else:
-            friend["admin"]["tag"] = friend["admin"]["tag"][0]["tag"]
-        friend["position"] = get_position(friend["name"])
-        if friend["tag"] is None:
-            friend["tag"] = ""
-        if friend["active"] and friend["position"] is None:
-            date = arrow.get(friend["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
-            friend["last_active"] = "depuis " + date.humanize(
+            link["admin"]["tag"] = link["admin"]["tag"][0]["tag"]
+        link["position"] = get_position(link["name"])
+        if link["tag"] is None:
+            link["tag"] = ""
+        if link["active"] and link["position"] is None:
+            date = arrow.get(link["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
+            link["last_active"] = "depuis " + date.humanize(
                 locale="FR", only_distance=True
             )
         else:
-            friend["last_active"] = ""
-    friend_list = sorted(friend_list, key=lambda d: d["name"])
-    friend_list = sorted(friend_list, key=lambda d: 0 if d["relation"] == 1 else 1)
-    friend_list = sorted(friend_list, key=lambda d: 0 if d["position"] else 1)
+            link["last_active"] = ""
+        user_list.append(link)
+
     db.close()
-    return render_template("friends.html", friends=friend_list, theme=theme, add=True)
+    print(user_list)
+    user_list = sorted(user_list, key=lambda d: d["name"])
+    user_list = sorted(user_list, key=lambda d: 0 if d["relation"] == 1 else 1)
+    user_list = sorted(
+        user_list, key=lambda d: 0 if d["position"] else 1
+    )
+    return render_template(
+        "links.html",
+        relation_name="Friends (All)",
+        relation=0,
+        links=user_list,
+        theme=theme,
+        add=True,
+    )
 
 
 @app.route("/profile/tutors/setnote", methods=["POST"])
@@ -241,7 +255,7 @@ def add_whilelist(userid):
     if not userid["is_tutor"]:
         return "Not authorized", 401
     with Db() as db:
-        user_id = request.form["user_id"].strip().lower()
+        user_id = int(request.form["user_id"].strip().lower())
         if user_id == 0:
             return "Login does not exist", 404
         db.set_note(user_id=user_id, note=request.form["note"])
@@ -274,7 +288,14 @@ def tutors_route(userid):
     tutor_list = sorted(tutor_list, key=lambda d: d["name"])
     tutor_list = sorted(tutor_list, key=lambda d: 0 if d["position"] else 1)
     db.close()
-    return render_template("friends.html", friends=tutor_list, theme=theme, add=False)
+    return render_template(
+        "links.html",
+        relation_name="Tutors",
+        relation=None,
+        links=tutor_list,
+        theme=theme,
+        add=False,
+    )
 
 
 @app.route("/search/<keyword>/<int:friends_only>")

@@ -18,8 +18,8 @@ def dict_factory(cursor, row) -> dict:
 
 
 class Db:
-    cur: sqlite3.Cursor = None
-    con: sqlite3.Connection = None
+    cur: sqlite3.Cursor
+    con: sqlite3.Connection
     is_closed = False
 
     def __init__(self, filename=config.db_path):
@@ -54,7 +54,9 @@ class Db:
     def create_table(self, sql_file: str):
         self.cur.executescript(read_file(sql_file))
 
+    #
     # Tutors
+    #
     def set_tutors(self, values: list[tuple[int, str]]):
         self.cur.execute("DELETE FROM TUTORS")
         for id, name in values:
@@ -74,7 +76,9 @@ class Db:
         req = self.cur.execute("SELECT * FROM TUTORS where id = ?", [userid])
         return len(req.fetchall()) > 0
 
+    #
     # Users
+    #
     def create_user(self, user_data: dict, campus=1):
         def god(db, field, userid: int):
             """get old data"""
@@ -102,8 +106,8 @@ class Db:
             ],
         )
 
-    def get_user(self, user_id: int):
-        query = self.cur.execute("SELECT id FROM USERS WHERE name = ?", [user_id])
+    def get_user(self, login: str):
+        query = self.cur.execute("SELECT id FROM USERS WHERE name = ?", [login])
         return query.fetchone()
 
     def get_user_by_id(self, user_id: int):
@@ -125,7 +129,9 @@ class Db:
         resp = req.fetchall()
         return resp
 
+    #
     # Theme
+    #
     def update_theme(self, who: int, css: str, js: str, enabled: int):
         if who is None or enabled > 1 or enabled < 0:
             return False
@@ -147,44 +153,53 @@ class Db:
             return {"enabled": 0, "javascript": "", "css": ""}
         return data
 
-    # Friends
-    def add_friend(self, who: int, add_id: int):
+    #
+    # Links
+    #
+    def add_link(self, who: int, add_id: int, relation: int = 0):
         if who is None or add_id is None or add_id <= 0:
             return False
         self.cur.execute(
-            "INSERT OR REPLACE INTO FRIENDS(who, has) VALUES (?, ?)", [who, add_id]
+            "INSERT OR REPLACE INTO LINKS(who, has) VALUES (?, ?)", [who, add_id]
         )
         self.commit()
         return True
 
-    def get_friends(self, who: int):
+    def get_links_with_relation(self, who: int, relation: int = 0):
         query = self.cur.execute(
-            "SELECT * FROM FRIENDS JOIN USERS ON USERS.id = FRIENDS.has WHERE who = ?",
+            "SELECT * FROM LINKS JOIN USERS ON USERS.id = LINKS.has WHERE who = ? and relation = ?",
+            [who, relation],
+        )
+        return query.fetchall()
+
+    def get_all_links(self, who: int):
+        query = self.cur.execute(
+            "SELECT * FROM LINKS JOIN USERS ON USERS.id = LINKS.has WHERE who = ?",
             [who],
         )
         return query.fetchall()
 
-    def is_friend(self, who: int, has: int) -> bool:
+    def is_link(self, who: int, has: int) -> str | None:
         req = self.cur.execute(
-            "SELECT relation FROM FRIENDS WHERE who = ? AND has = ?", [who, has]
+            "SELECT relation FROM LINKS WHERE who = ? AND has = ?", [who, has]
         )
         res = req.fetchone()
         if res is not None:
             return res["relation"]
-        return False
+        return None
 
-    def remove_friend(self, who: int, remove: int):
+    def remove_link(self, who: int, remove: int):
         if who is None or remove is None or remove <= 0:
             return False
-        self.cur.execute("DELETE FROM FRIENDS WHERE who = ? AND has = ?", [who, remove])
+        self.cur.execute("DELETE FROM LINKS WHERE who = ? AND has = ?", [who, remove])
         self.con.commit()
         return True
 
-    def set_relation(self, who: int, has: int, relation: int):
-        if who is None or has is None or relation < 0 or relation > 1:
+    def set_link_relation(self, who: int, has: int, relation: int):
+        if who is None or has is None:
             return False
         self.cur.execute(
-            "UPDATE FRIENDS SET relation = ? WHERE who = ? AND has = ?",
+            "UPDATE LINKS SET relation = ? WHERE who = ? AND has = ?",
             [relation, who, has],
         )
         self.commit()
@@ -539,3 +554,30 @@ class Db:
             "SELECT * FROM USERS WHERE custom_image_link IS NOT NULL"
         )
         return req.fetchall()
+
+    #
+    # RELATIONS NAME
+    #
+
+    def get_all_relations(self, userid: int) -> dict[int, str]:
+        req = self.cur.execute(
+            "SELECT * FROM RELATIONS_NAME WHERE userid = ?", [userid]
+        )
+        out = {x["relation"]: x["name"] for x in req.fetchall()}
+        out[0] = "Friends"
+        out[1] = "Best Friends"
+        return out
+
+    def set_relation_name(self, userid: int, relation_id: int, name: str):
+        self.cur.execute(
+            "INSERT INTO RELATIONS_NAME(userid, relation, name) VALUES (?, ?, ?)",
+            [userid, relation_id, name],
+        )
+        self.commit()
+
+    def delete_relation_name(self, userid: int, relation_id: int):
+        self.cur.execute(
+            "DELETE FROM RELATIONS_NAME WHERE userid = ? and relation = ?",
+            [userid, relation_id],
+        )
+        self.commit()

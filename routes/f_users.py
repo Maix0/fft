@@ -18,16 +18,16 @@ def getuser(login, userid):
         user = db.get_user_profile(login, api)
         if user is None:
             return "", 404
-        is_friend = db.is_friend(userid["userid"], user["id"])
+        relation = db.is_link(userid["userid"], user["id"])
         user["admin"] = db.is_admin(user["id"])
         custom_img = db.get_custom_image(user["id"])
-    user["is_friend"] = is_friend
+    user["relation"] = relation
     user["position"] = get_position(user["name"])
-    if (custom_img["custom_image_link"]):
+    if custom_img["custom_image_link"]:
         user["image"] = custom_img["custom_image_link"]
     else:
         user["image"] = proxy_images(user["image"])
-    
+
     return dict(user)
 
 

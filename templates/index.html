@@ -112,10 +112,12 @@
 								{%- set relation = 'me' -%}
 							{%- elif y in locations and locations[y]['whitelist'] -%}
 								{%- set relation = 'whitelist' -%}
-							{%- elif y in locations and locations[y]['close_friend'] -%}
+							{%- elif y in locations and locations[y]['relation'] == 1 -%}
 								{%- set relation = 'close_friend' -%}
-							{%- elif y in locations and locations[y]['friend'] -%}
+							{%- elif y in locations and locations[y]['relation'] == 0 -%}
 								{%- set relation = 'friend' -%}
+							{%- elif y in locations and locations[y]['relation'] -%}
+								{%- set relation = 'relation-' + locations[y]['relation']|string -%}
 							{%- elif y in issues_map and issues_map[y]['count'] >= 1 and issues_map[y]['issue'] == 1 -%}
 								{%- set relation = 'dead' -%}
 							{%- elif y in issues_map and issues_map[y]['count'] >= 1 and issues_map[y]['issue'] == 2 -%}
@@ -193,7 +195,7 @@
 					modal.show();
 					return;
 				}
-				openFriend(login, true)
+				openLink(login, true)
 			})
 
 			if (!e.dataset.login)
