@@ -177,3 +177,4 @@ projects*.json
 /nixos.qcow2
 /result
 .envrc
+/redis
