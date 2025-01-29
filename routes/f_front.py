@@ -62,6 +62,7 @@ def profile(login, userid):
 
 
 @app.route("/import_friends/", methods=["GET"])
+@app.route("/import_friends", methods=["GET"])
 @auth_required
 def import_friends(userid):
     return render_template("import_friends.html")
@@ -241,7 +242,7 @@ def add_whilelist(userid):
     if not userid["is_tutor"]:
         return "Not authorized", 401
     with Db() as db:
-        user_id = request.form["user_id"].strip().lower()
+        user_id = int(request.form["user_id"].strip().lower())
         if user_id == 0:
             return "Login does not exist", 404
         db.set_note(user_id=user_id, note=request.form["note"])
