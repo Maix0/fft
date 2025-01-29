@@ -55,7 +55,7 @@ div.scroll {
 }
 
 .admin {
-	animation: admin 20s infinite;
+	animation: admin 4.2s infinite;
 }
 
 .focus {
@@ -144,25 +144,11 @@ div.scroll {
 }
 
 @keyframes admin {
-	0.00% {
-		background-color: red;
-	}
-	16.67% {
-		background-color: orange;
-	}
-	33.33% {
-		background-color: yellow;
-	}
-	50.00% {
-		background-color: green;
-	}
-	66.67% {
-		background-color: blue;
-	}
-	83.33% {
-		background-color: indigo;
-	}
-	100.00% {
-		background-color: violet;
-	}
+	0%   { background: oklch(50% 0.3 0); }    /* Red */
+	16%  { background: oklch(50% 0.3 60); }   /* Orange */
+	33%  { background: oklch(50% 0.3 120); }  /* Yellow-Green */
+	50%  { background: oklch(50% 0.3 180); }  /* Cyan */
+	66%  { background: oklch(50% 0.3 240); }  /* Blue */
+	83%  { background: oklch(50% 0.3 300); }  /* Purple */
+	100% { background: oklch(50% 0.3 360); }  /* Back to Red */{
 }
