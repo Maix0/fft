@@ -20,6 +20,15 @@
 			console.log(friends_string);
 
 			fetch(`/friends/add/${friends_string}`);
+			
+			const fav_friends = json.friends.filter((f) => f.relation === 1);
+			console.log(fav_friends);
+			for (let i = 0; i < fav_friends.length; i += 1)
+			{
+				const f = fav_friends[i];
+				fetch(`/friends/set_relation/${f.name}/1`)
+			}
+
 		});
 		reader.readAsText(file);
 	}
