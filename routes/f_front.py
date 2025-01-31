@@ -42,6 +42,8 @@ def profile(login, userid):
         ).humanize(locale="FR", only_distance=True)
     else:
         user["last_active"] = ""
+    if user["note"] is None:
+        user["note"] = ""
     if userid["is_tutor"]:
         user["notedit"] = (
             user["note"].replace("\n", "\\n").replace("\r", "").replace("'", "\\'")
