@@ -52,6 +52,8 @@ def auth_required(function):
         theme = db.get_theme(userid["userid"])
         tag = db.get_user_tag(userid["userid"])
         is_tutor = db.is_tutors(userid["userid"])
+        if is_tutor is None:
+            is_tutor = False
         db.close()
         userid["admin"] = is_admin
         userid["tag"] = tag["tag"]
