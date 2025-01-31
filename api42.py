@@ -24,8 +24,6 @@ class Api:
 
     def get_token(self) -> bool:
         self.add_rate()
-        print(f"{self.key=}")
-        print(f"{self.secret=}")
         try:
             r = requests.post(
                 f"{self.intra}/oauth/token",

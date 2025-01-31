@@ -38,6 +38,7 @@ def admin(userid):
         tags=tags,
         piscines_dates=piscines_dates,
         custom_images=custom_images,
+        update_key=config.update_key,
     )
 
 
@@ -67,7 +68,6 @@ def update_tutors(token):
 def update_user(login, userid):
     if not userid["admin"]:
         return "Not authorized", 401
-    # 166 is the id of the badge Tutors
     with Db() as db:
         ret = db.get_user_profile(login, api)
     return ("OK", 200) if ret else ("Error", 503)

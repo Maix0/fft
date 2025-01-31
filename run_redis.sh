@@ -83,4 +83,4 @@ log INFO "Mkdir redis directory: $(realpath ./redis)"
 mkdir -p ./redis
 cd ./redis || exit
 log INFO "Start redis-server in $(pwd)"
-exec $REDIS
+exec $REDIS --port "${F42_REDIS_PORT:-6379}"

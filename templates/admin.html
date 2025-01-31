@@ -247,6 +247,10 @@
 			<span class="badge badge-sm align-vertical bg-danger">{{ user.admin.tag | safe }}</span></h1>
 	</div>
 
+	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary text-center">
+		<button class="btn btn-outline-danger text-center" onclick="updateLocation()">Force Refresh Clusters</button>
+		<button class="btn btn-outline-danger text-center" onclick="updateTutors()">Force Refresh Tutors</button>
+	</div>
 	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary">
 		<form method="POST" id="changetagforme">
 			<div class="input-group mb-3">
@@ -724,6 +728,22 @@
 				location.reload();
 			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
 		});
+
+		const UPDATE_KEY={{ update_key|tojson }};
+		
+		function updateLocation()
+		{ 
+			fetch(`/locations/${UPDATE_KEY}/1`).then(async response => {
+				triggerToast("Locations has been refreshed", response.status === 200);
+			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
+		}
+		
+		function updateTutors()
+		{ 
+			fetch(`/admin/update/tutors/${UPDATE_KEY}`).then(async response => {
+				triggerToast("Tutors has been refreshed", response.status === 200);
+			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
+		}
 
 	</script>
 {% endblock %}
