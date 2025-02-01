@@ -44,22 +44,14 @@ def profile(login, userid):
         user["last_active"] = ""
     if user["note"] is None:
         user["note"] = ""
-    if userid["is_tutor"]:
-        user["notedit"] = (
-            user["note"].replace("\n", "\\n").replace("\r", "").replace("'", "\\'")
-        )
-        user["note"] = user["note"].replace("\n", "<br>")
-    else:
-        user["notedit"] = ""
-        user["note"] = ""
+    #if userid["is_tutor"]:
+    #    user["note"] = user["note"].replace("\n", "<br>")
     return render_template(
         "profile.html",
         user=user,
         is_friend=is_friend,
         userid=userid,
         theme=theme,
-        is_admin=userid["admin"],
-        is_tut=userid["is_tutor"],
     )
 
 

@@ -168,6 +168,16 @@ function openFriend(name, auto_reload = false) {
 				let modal_name = openFriendModalName.querySelector('.name');
 				let send_msg = document.getElementById('send_msg');
 
+				let note = document.getElementById('FP-note-inner');
+				let noteEditBtn = document.getElementById('FP-note-edit');
+				
+				// will be empty string on none-tutor user
+				if (note && data["note"])
+					note.innerText = data["note"];
+				if (noteEditBtn)
+					noteEditBtn.onclick = () => openEditNote(data["id"], data["note"]);
+				
+
 				openFriendLabelAddFriend.hidden = data.is_friend !== false;
 				openFriendLabelDeleteFriend.hidden = data.is_friend === false;
 				addCloseFriend.hidden = data.is_friend === false ? false : data.is_friend !== 0;
@@ -267,6 +277,16 @@ function isTouchDevice() {
 	return (('ontouchstart' in window) ||
 		(navigator.maxTouchPoints > 0) ||
 		(navigator.msMaxTouchPoints > 0));
+}
+function openEditNote(user_id, note)
+{
+	let modalElem = document.querySelector("#editnotemodal");
+	if (!modalElem)
+		return ;
+	modalElem.querySelector("input[name='user_id']").value = user_id.toString();
+	modalElem.querySelector("textarea[name='note']").value = note;
+	
+	let modal = new bootstrap.Modal(modalElem).show();
 }
 
 (() => {
@@ -384,24 +404,18 @@ function isTouchDevice() {
 	}
 })();
 
-
-// Send message
 (() => {
-	let msg_form = document.getElementById('sendMessageForm');
-	if (!msg_form) return;
-	msg_form.addEventListener('submit', (e) => {
-		e.preventDefault();
-		let form_data = new FormData(msg_form);
-		fetch('/messages/send/', {
+	document.getElementById('editnote').addEventListener('submit', function (event) {
+		event.preventDefault();
+
+		const formData = new FormData(event.target);
+
+		fetch('/profile/tutors/setnote', {
 			method: 'POST',
-			body: form_data
-		}).then(async (response) => {
-			if (response.status === 200) {
-				triggerToast('Message envoyé avec succès !', true);
-				document.getElementById('sendMessageModal').querySelector('.btn-close').click();
-			} else {
-				triggerToast(`Une erreur s'est produite ! ${await response.text()}`);
-			}
-		})
+			body: formData
+		}).then(async response => {
+			triggerToast(await response.text(), response.status === 200);
+			location.reload();
+		}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
 	});
-})();
+})()

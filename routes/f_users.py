@@ -23,11 +23,14 @@ def getuser(login, userid):
         custom_img = db.get_custom_image(user["id"])
     user["is_friend"] = is_friend
     user["position"] = get_position(user["name"])
-    if (custom_img["custom_image_link"]):
+    if not userid["is_tutor"]:
+        user["note"] = ""
+
+    if custom_img["custom_image_link"]:
         user["image"] = custom_img["custom_image_link"]
     else:
         user["image"] = proxy_images(user["image"])
-    
+
     return dict(user)
 
 

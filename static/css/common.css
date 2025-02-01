@@ -46,3 +46,7 @@
   --bs-btn-active-bg: #e6005e;
   --bs-btn-active-border-color: #b30049;
 }
+
+.zindextop {
+	z-index: 1501 !important;
+}

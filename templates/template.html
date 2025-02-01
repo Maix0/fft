@@ -19,6 +19,31 @@
 	{%- endif %}
 </head>
 <body>
+<div class="modal fade zindextop" id="editnotemodal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="POST" id="editnote">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5">Edit note</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-floating mb-3">
+						<textarea name="note" class="form-control" id="inputnote" rows="4"></textarea>
+						<label for="inputnote">Note :</label>
+					</div>
+				</div>
+				<input type="hidden" name="user_id">
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					<button type="submit" class="btn btn-primary">Confirmer</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary mb-2 shadow">
 	<div class="container-fluid">
 		<a class="navbar-brand me-2 position-relative {{ 'no-click' if kiosk else '' }}" href="/">
@@ -52,9 +77,6 @@
 					{%- if g.user["admin"] %}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/admin/">Admin</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="/manager/">FFT Manager</a>
 					</li>
 					{%- endif %}
 				{%- endif %}
