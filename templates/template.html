@@ -74,6 +74,11 @@
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/tutors/">Tutors</a>
 					</li>
+					{%- if g.user['is_tutor'] %}
+					<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="/notes/">Notes</a>
+					</li>
+					{%- endif %}
 					{%- if g.user["admin"] %}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="/admin/">Admin</a>

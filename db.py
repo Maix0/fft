@@ -103,6 +103,10 @@ class Db:
             ],
         )
 
+    def get_all_notes(self) -> list:
+        query = self.cur.execute("SELECT * FROM USERS WHERE note != ''")
+        return query.fetchall()
+
     def get_user(self, user_id: int):
         query = self.cur.execute("SELECT id FROM USERS WHERE name = ?", [user_id])
         return query.fetchone()

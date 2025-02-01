@@ -28,6 +28,8 @@
               ]))
           pkgs.black
           pkgs.ruff
+          pkgs.sqlite
+          pkgs.rlwrap
         ];
       };
       packages = rec {

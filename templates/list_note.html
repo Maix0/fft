@@ -1,0 +1,43 @@
+{% extends 'template.html' %}
+{% block css %}<link href="/static/css/friends.css?v={{ version }}" rel="stylesheet">{% endblock %}
+{% block content %}
+    {% include 'open_modal.html' %}
+    <div class="container">
+        <div class="list-group-flush">
+            {% if g.user['is_tutor'] %}
+                {% for u in users %}
+                    <div class="d-flex flex-row h-100">
+                        <div id="case-{{ u.name }}"
+                             class="card shadow m-2 pl-fix card-size grow"
+                             onclick="openFriend('{{ u.name }}', true)">
+                            <img src="{{ proxy_images(u.custom_image_link if u.custom_image_link else u.image_medium) }}"
+                                 class="m-1 card-img-top card-img-size"
+                                 alt="{{ u.name }}'s image">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fa-solid {{ 'fa-2xs fa-circle online' if u.position else 'fa-xs fa-person-walking offline' }}"></i> {{ u.name }}
+                                </h5>
+                                <p class="card-text">
+                                    {{ u.position if u.position else 'Absent' }} {{ u.last_active }}
+                                    {% if u.position %}<a class="fa-solid fa-users-viewfinder" href="/goto/{{ u.position }}"></a>{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="rounded m-2 p-1 align-self-stretch flex-grow-1 w-70 h-100">
+                            <div class="container mb-2 p-2 shadow rounded bg-body-tertiary text-center h-100">
+                                <div>
+                                    <span class="fw-bolder text-decoration-underline">Note Tutor</span>
+                                    <button class="btn btn-secondary btn-sm"
+                                            onclick='openEditNote({{ u.id }}, {{ u.note|tojson }})'>Edit</button>
+                                </div>
+                                <div class="text-center text-wrap">
+                                    {{ u.note | replace('\n', '<br>') | safe }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

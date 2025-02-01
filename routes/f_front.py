@@ -44,7 +44,7 @@ def profile(login, userid):
         user["last_active"] = ""
     if user["note"] is None:
         user["note"] = ""
-    #if userid["is_tutor"]:
+    # if userid["is_tutor"]:
     #    user["note"] = user["note"].replace("\n", "<br>")
     return render_template(
         "profile.html",
@@ -53,6 +53,15 @@ def profile(login, userid):
         userid=userid,
         theme=theme,
     )
+
+
+@app.route("/notes/", methods=["GET"])
+@app.route("/notes", methods=["GET"])
+@auth_required
+def tutors_notes(userid):
+    with Db() as db:
+        notes = db.get_all_notes()
+    return render_template("list_note.html", users=notes)
 
 
 @app.route("/import_friends/", methods=["GET"])
