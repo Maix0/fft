@@ -60,8 +60,26 @@ def profile(login, userid):
 @auth_required
 def tutors_notes(userid):
     with Db() as db:
-        notes = db.get_all_notes()
-    return render_template("list_note.html", users=notes)
+        notes_user = db.get_all_notes()
+    for u in notes_user:
+        u.update({"admin": {"tag": db.get_admin_tag(u["id"])}})
+        if len(u["admin"]["tag"]) == 0:
+            u["admin"]["tag"] = ""
+        else:
+            u["admin"]["tag"] = u["admin"]["tag"][0]["tag"]
+        u["position"] = get_position(u["name"])
+        if u["tag"] is None:
+            u["tag"] = ""
+        if u["active"] and u["position"] is None:
+            date = arrow.get(u["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
+            u["last_active"] = "depuis " + date.humanize(
+                locale="FR", only_distance=True
+            )
+        else:
+            u["last_active"] = ""
+    notes_user = sorted(notes_user, key=lambda d: d["active"])
+    notes_user = sorted(notes_user, key=lambda d: d["name"])
+    return render_template("list_note.html", users=notes_user)
 
 
 @app.route("/import_friends/", methods=["GET"])
