@@ -44,8 +44,6 @@ def profile(login, userid):
         user["last_active"] = ""
     if user["note"] is None:
         user["note"] = ""
-    # if userid["is_tutor"]:
-    #    user["note"] = user["note"].replace("\n", "<br>")
     return render_template(
         "profile.html",
         user=user,
@@ -77,8 +75,8 @@ def tutors_notes(userid):
                 )
             else:
                 u["last_active"] = ""
-    notes_user = sorted(notes_user, key=lambda d: d["active"])
     notes_user = sorted(notes_user, key=lambda d: d["name"])
+    notes_user = sorted(notes_user, key=lambda d: d["active"])
     return render_template("list_note.html", users=notes_user)
 
 
