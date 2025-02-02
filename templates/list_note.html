@@ -14,8 +14,8 @@
                                  class="m-1 card-img-top card-img-size"
                                  alt="{{ u.name }}'s image">
                             <div class="card-body">
-								<span class="badge badge-sm align-vertical bg-info text-dark">{{ friend.tag | safe }}</span>
-								<span class="badge badge-sm align-vertical bg-danger text-dark">{{ friend.admin.tag | safe }}</span>
+								<span class="badge badge-sm align-vertical bg-info text-dark">{{ u.tag | safe }}</span>
+								<span class="badge badge-sm align-vertical bg-danger text-dark">{{ u.admin.tag | safe }}</span>
                                 <h5 class="card-title">
                                     <i class="fa-solid {{ 'fa-2xs fa-circle online' if u.position else 'fa-xs fa-person-walking offline' }}"></i> {{ u.name }}
                                 </h5>
