@@ -68,6 +68,8 @@ def tutors_notes(userid):
             u["position"] = get_position(u["name"])
             if u["tag"] is None:
                 u["tag"] = ""
+            if u["active"] is None:
+                u["active"] = "1970-01-01 00:00:00"
             if u["active"] and u["position"] is None:
                 date = arrow.get(u["active"], "YYYY-MM-DD HH:mm:ss", tzinfo="UTC")
                 u["last_active"] = "depuis " + date.humanize(
@@ -76,7 +78,7 @@ def tutors_notes(userid):
             else:
                 u["last_active"] = ""
     notes_user = sorted(notes_user, key=lambda d: d["name"], reverse=True)
-    notes_user = sorted(notes_user, key=lambda d: d["active"], reverse=True)
+    notes_user = sorted(notes_user, key=lambda d: d["active"] if d["active"] is not None else "depuis ", reverse=True)
     return render_template("list_note.html", users=notes_user)
 
 
