@@ -61,7 +61,7 @@ def auth_required(function):
         userid["login"] = details["name"]
         userid["image_medium"] = proxy_images(details["image_medium"])
         userid["theme"] = theme
-        userid["is_tutor"] = is_tutor
+        userid["is_tutor"] = is_tutor or is_admin
         g.user = userid
         kwargs["userid"] = userid
         return function(*args, **kwargs)
