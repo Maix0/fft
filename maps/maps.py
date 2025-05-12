@@ -23,7 +23,7 @@ def count_in_cluster(cluster: str, keys: dict):
 
 
 def percent_to_btn(remaining, maximum, default="primary"):
-    percentage = (remaining / maximum) * 100
+    percentage = ((remaining / maximum) * 100) if maximum != 0 else 0
     if percentage < 25:
         return "danger"
     elif percentage < 35:
