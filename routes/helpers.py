@@ -122,7 +122,12 @@ def verify_csrf(csrf: str):
 
 def get_position(name):
     ret = r.get("USER>" + str(name))
-    return ret.decode("utf-8") if ret is not None else None
+    if ret is None:
+        return None
+    ret = ret.decode("utf-8")
+    ret.replace("f1b", "F1B")
+    ret.replace("f", "F")
+    return ret
 
 
 def standard_cluster(pos):
@@ -177,8 +182,8 @@ def optimize_locations(data: list[dict]) -> list[dict]:
     compressed = []
     for user in data:
         tmp = user["user"]
-        user["host"] = user["host"].replace("made-f0b", "made-f0B")
-        user["host"] = user["host"].replace("made-f0c", "made-f0C")
+        user["host"] = user["host"].replace("f1b", "F1B")
+        user["host"] = user["host"].replace("f", "F")
         compressed.append(
             {
                 "id": user["id"],
