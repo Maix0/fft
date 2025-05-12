@@ -14,32 +14,6 @@ def exrypz(computer: str):
     return False
 
 
-class RowPart:
-    count: int
-    is_pc: bool
-
-    def __init__(self, count: int, is_pc: bool = True):
-        self.count = count
-        self.is_pc = is_pc
-
-
-def create_row(cluster: str, row: str, row_parts: list[int | str]) -> list[str]:
-    out = [row]
-    r = 1
-    for i, d in enumerate(row_parts):
-        if isinstance(d, int):
-            if d <= 0:
-                out += ["" for _ in range(d)]
-            else:
-                out += [f"{cluster}{row}{r + p}" for p in range(d)]
-        else:
-            out.append(d)
-    return out
-
-
-# fmt: off
-
-
 # @formatter:off
 # noqa: F401
 # fmt: off
@@ -104,32 +78,32 @@ map = {
 
 
     "f1b": [
-        ['',  '',       '',       '',       '',       '',       '',        '',        '',        '',       '',        '', ],
-        ['x', 'x',      'x',      'x',      'x',      'x',      'x',       'x',       'x',       'x',      'x',       'x',],
-        ['x', 'f1br1s1', 'f1br2s1', 'f1br3s1', 'f1br4s1', 'f1br5s1', 'f1br6s1',  'f1br7s1',  'f1br8s1',  'f1br9s1', 'f1br10s1', 'x',],
-        ['x', 'f1br1s2', 'f1br2s2', 'f1br3s2', 'f1br4s2', 'f1br5s2', 'f1br6s2',  'f1br7s2',  'f1br8s2',  'f1br9s2', 'f1br10s2', 'x',],
-        ['x', 'f1br1s3', 'f1br2s3', 'f1br3s3', 'f1br4s3', 'f1br5s3', 'f1br6s3',  'f1br7s3',  'f1br8s3',  'f1br9s3', 'f1br10s3', 'x',],
-        ['x', 'f1br1s4', 'f1br2s4', 'f1br3s4', 'f1br4s4', 'f1br5s4', 'f1br6s4',  'f1br7s4',  'f1br8s4',  'f1br9s4', 'f1br10s4', 'x',],
-        ['x', 'f1br1s5', 'f1br2s5', 'f1br3s5', 'f1br4s5', 'f1br5s5', 'f1br6s5',  'f1br7s5',  'f1br8s5',  'f1br9s5', 'f1br10s5', 'x',],
-        ['x', 'f1br1s6', 'f1br2s6', 'f1br3s6', 'f1br4s6', 'f1br5s6', 'f1br6s6',  'f1br7s6',  'f1br8s6',  'f1br9s6', 'f1br10s6', 'x',],
-        ['x', 'f1br1s7', 'f1br2s7', 'f1br3s7', 'f1br4s7', 'f1br5s7', 'f1br6s7',  'f1br7s7',  'f1br8s7',  'f1br9s7', 'f1br10s7', 'x',],
-        ['x', 'f1br1s8', 'f1br2s8', 'f1br3s8', 'f1br4s8', 'f1br5s8', 'f1br6s8',  'f1br7s8',  'f1br8s8',  'f1br9s8', 'f1br10s8', 'x',],
-        ['x', '',       '',       '',       '',       '',       '',        '',        '',        '',       '',        'x',],
-        ['x', 'x',      'x',      'x',      'x',      '',       'f1br6s9',  '',        'f1br8s9',  'x',      'x',       'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s10', '',        'f1br8s10', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s11', '',        'f1br8s11', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s12', 'f1br7s9' , 'f1br8s12', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s13', 'f1br7s10', 'f1br8s13', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s14', 'f1br7s11', 'f1br8s14', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s15', 'f1br7s12', 'f1br8s15', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s16', 'f1br7s13', 'f1br8s16', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s17', 'f1br7s14', 'f1br8s17', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s18', 'f1br7s15', 'f1br8s18', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s19', 'f1br7s16', 'f1br8s19', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s21', '',        'f1br8s21', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s10', '',        'f1br8s10', 'x',],
-        ['',  '',       '',       '',       'x',      '',       'f1br6s10', '',        'f1br8s10', 'x',],
-        ['',  '',       '',       '',       'x',      'x',      'x',       'x',       'x',       'x',],
+        ['',  '',        '',        '',        '',        '',         '',          '',         '',         '',        '',         '', ],
+        ['x', 'x',       'x',       'x',       'x',       'x',        'x',         'x',        'x',        'x',       'x',        'x',],
+        ['x', 'f1br1s1', 'f1br2s1', 'f1br3s1', 'f1br4s1', 'f1br5s1',  'f1br6s1',   'f1br7s1',  'f1br8s1',  'f1br9s1', 'f1br10s1', 'x',],
+        ['x', 'f1br1s2', 'f1br2s2', 'f1br3s2', 'f1br4s2', 'f1br5s2',  'f1br6s2',   'f1br7s2',  'f1br8s2',  'f1br9s2', 'f1br10s2', 'x',],
+        ['x', 'f1br1s3', 'f1br2s3', 'f1br3s3', 'f1br4s3', 'f1br5s3',  'f1br6s3',   'f1br7s3',  'f1br8s3',  'f1br9s3', 'f1br10s3', 'x',],
+        ['x', 'f1br1s4', 'f1br2s4', 'f1br3s4', 'f1br4s4', 'f1br5s4',  'f1br6s4',   'f1br7s4',  'f1br8s4',  'f1br9s4', 'f1br10s4', 'x',],
+        ['x', 'f1br1s5', 'f1br2s5', 'f1br3s5', 'f1br4s5', 'f1br5s5',  'f1br6s5',   'f1br7s5',  'f1br8s5',  'f1br9s5', 'f1br10s5', 'x',],
+        ['x', 'f1br1s6', 'f1br2s6', 'f1br3s6', 'f1br4s6', 'f1br5s6',  'f1br6s6',   'f1br7s6',  'f1br8s6',  'f1br9s6', 'f1br10s6', 'x',],
+        ['x', 'f1br1s7', 'f1br2s7', 'f1br3s7', 'f1br4s7', 'f1br5s7',  'f1br6s7',   'f1br7s7',  'f1br8s7',  'f1br9s7', 'f1br10s7', 'x',],
+        ['x', 'f1br1s8', 'f1br2s8', 'f1br3s8', 'f1br4s8', 'f1br5s8',  'f1br6s8',   'f1br7s8',  'f1br8s8',  'f1br9s8', 'f1br10s8', 'x',],
+        ['d', '',        '',        '',        '',        '',         '',          '',         '',         '',         '',        'x',],
+        ['x', 'x',       'x',       'x',       'x',       '',         'f1br6s9',   '',         'f1br8s9',  'x',        'x',       'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s10',  '',         'f1br8s10', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s11',  '',         'f1br8s11', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s12',  'f1br7s9' , 'f1br8s12', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s13',  'f1br7s10', 'f1br8s13', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s14',  'f1br7s11', 'f1br8s14', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s15',  'f1br7s12', 'f1br8s15', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s16',  'f1br7s13', 'f1br8s16', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s17',  'f1br7s14', 'f1br8s17', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s18',  'f1br7s15', 'f1br8s18', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s19',  'f1br7s16', 'f1br8s19', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s21',  '',         'f1br8s21', 'x',],
+        ['',  '',        '',        '',        'x',       '',         'f1br6s10',  '',         'f1br8s10', 'x',],
+        ['',  '',        '',        '',        'd',       '',         'f1br6s10',  '',         'f1br8s10', 'x',],
+        ['',  '',        '',        '',        'x',       'x',        'x',         'x',        'x',       'x',],
 
 
     ],
@@ -200,7 +174,7 @@ map = {
         ],
     },
     "piscine": [],
-    "default": "f6",
+    "default": "f1",
     "exrypz": exrypz,
 }
 
