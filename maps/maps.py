@@ -16,6 +16,7 @@ def places(exrypz, _map: list[list[str]]):
 
 def count_in_cluster(cluster: str, keys: dict):
     i = 0
+    cluster += "r"
     for key in keys.keys():
         if cluster in key:
             i += 1
