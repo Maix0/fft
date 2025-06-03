@@ -12,6 +12,18 @@ import zlib
 from routes.api_helpers import find_correct_campus
 
 
+def pc_loc(station: str) -> str:
+    """
+    This takes a station location string, and make it so it is using uppercase for the cluster name
+    f1r0s7   => F1r0s7
+    f1br10s2 => F1Br10s2
+    f6r10s8  => F6r10s8
+    """
+    station = station.replace("f1b", "F1B")
+    station = station.replace("f", "F")
+    return station
+
+
 def proxy_images(url: str, light=False):
     if not url:
         return "/static/img/unknown.jpg"
@@ -124,9 +136,7 @@ def get_position(name):
     ret = r.get("USER>" + str(name))
     if ret is None:
         return None
-    ret = ret.decode("utf-8")
-    ret.replace("f1b", "F1B")
-    ret.replace("f", "F")
+    ret = pc_loc(ret.decode("utf-8"))
     return ret
 
 
@@ -142,12 +152,11 @@ def create_users(db, profiles):
         campus = find_correct_campus(elem)
         db.create_user(elem["user"], campus)
         if elem["user"]["location"]:
-            db.delete_issues(elem["user"]["location"])
-            r.set("USER>" + str(elem["user"]["id"]), elem["user"]["location"], ex=200)
-            r.set(
-                "USER>" + str(elem["user"]["login"]), elem["user"]["location"], ex=200
-            )
-            r.set("PERM>" + str(elem["user"]["login"]), elem["user"]["location"])
+            loc = pc_loc(elem["user"]["location"])
+            db.delete_issues(loc)
+            r.set("USER>" + str(elem["user"]["id"]), loc, ex=200)
+            r.set("USER>" + str(elem["user"]["login"]), loc, ex=200)
+            r.set("PERM>" + str(elem["user"]["login"]), loc)
     db.commit()
 
 
@@ -155,7 +164,7 @@ def get_last_pos(login):
     x = r.get("PERM>" + login)
     if not x:
         return "Unknown"
-    return x.decode("utf-8")
+    return pc_loc(x.decode("utf-8"))
 
 
 def get_cached_locations(campus=1):
@@ -182,12 +191,10 @@ def optimize_locations(data: list[dict]) -> list[dict]:
     compressed = []
     for user in data:
         tmp = user["user"]
-        user["host"] = user["host"].replace("f1b", "F1B")
-        user["host"] = user["host"].replace("f", "F")
         compressed.append(
             {
                 "id": user["id"],
-                "host": user["host"],
+                "host": pc_loc(user["host"]),
                 "campus_id": user["campus_id"],
                 "user": {
                     "id": tmp["id"],

@@ -269,6 +269,8 @@ class Db:
         return True
 
     def create_issue(self, who: int, station: str, issue: int) -> bool:
+        station = station.replace("f1b", "F1B")
+        station = station.replace("f", "F")
         if issue < 0 or issue > 5 or len(station) > 15 or len(station) < 6:
             return False
         if self.already_created(who, station):
