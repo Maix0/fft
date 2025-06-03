@@ -4,16 +4,12 @@ import time
 import os
 
 clusters = [
-    "bess-f2",
-    "bess-f3",
-    "bess-f4",
-    "paul-f3",
-    "paul-f4",
-    "paul-f5",
-    "made-f0A",
-    "made-f0B",
-    "made-f0C",
-    "made-f0D",
+    "f0",
+    "f1",
+    "f1b",
+    "f2",
+    "f4",
+    "f6",
 ]
 cookie = os.environ.get("SCRAPER_COOKIE")
 port = os.environ.get("F42_PORT", default=80)
