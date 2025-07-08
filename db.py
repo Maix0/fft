@@ -107,13 +107,13 @@ class Db:
         query = self.cur.execute("SELECT * FROM USERS WHERE note != ''")
         return query.fetchall()
 
-    def get_user(self, user_id: int):
-        query = self.cur.execute("SELECT id FROM USERS WHERE name = ?", [user_id])
+    def get_user(self, login: str):
+        query = self.cur.execute("SELECT id FROM USERS WHERE name = ?", [login])
         return query.fetchone()
 
     def get_user_by_id(self, user_id: int):
         query = self.cur.execute(
-            "SELECT name, campus, image_medium FROM USERS WHERE id = ?", [user_id]
+            "SELECT id, name, campus, image_medium FROM USERS WHERE id = ?", [user_id]
         )
         return query.fetchone()
 
@@ -545,4 +545,18 @@ class Db:
         req = self.cur.execute(
             "SELECT * FROM USERS WHERE custom_image_link IS NOT NULL"
         )
+        return req.fetchall()
+
+    def get_note_access(self, userid: int):
+        req = self.cur.execute("SELECT note_access FROM  USERS WHERE id = ?", [userid])
+        return req.fetchone()
+
+    def set_note_access(self, userid: int, access: bool):
+        req = self.cur.execute(
+            "UPDATE USERS SET note_access = ? WHERE id = ?", [access, userid]
+        )
+        return req.fetchone()
+
+    def get_all_note_access(self):
+        req = self.cur.execute("SELECT * FROM USERS WHERE note_access == 1")
         return req.fetchall()

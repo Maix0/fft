@@ -78,7 +78,11 @@ def tutors_notes(userid):
             else:
                 u["last_active"] = ""
     notes_user = sorted(notes_user, key=lambda d: d["name"], reverse=True)
-    notes_user = sorted(notes_user, key=lambda d: d["active"] if d["active"] is not None else "depuis ", reverse=True)
+    notes_user = sorted(
+        notes_user,
+        key=lambda d: d["active"] if d["active"] is not None else "depuis ",
+        reverse=True,
+    )
     return render_template("list_note.html", users=notes_user)
 
 

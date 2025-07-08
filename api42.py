@@ -5,8 +5,10 @@ import math
 import config
 import sys
 
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
 
 class Api:
     key: str = ""
@@ -145,9 +147,17 @@ class Api:
         except Exception as e:
             return {"error": e.__str__()}, 0, {}
         if r and r.status_code == 200:
-            return r.json(), r.status_code, {x.lower(): y for x, y in dict(r.headers).items()}
+            return (
+                r.json(),
+                r.status_code,
+                {x.lower(): y for x, y in dict(r.headers).items()},
+            )
         else:
-            return {"error": r.text}, r.status_code, {x.lower(): y for x, y in dict(r.headers).items()}
+            return (
+                {"error": r.text},
+                r.status_code,
+                {x.lower(): y for x, y in dict(r.headers).items()},
+            )
 
     def get_unknown_user(self, user_name: str) -> tuple[int, dict]:
         data, status, _ = self.get(f"/users/{user_name}")

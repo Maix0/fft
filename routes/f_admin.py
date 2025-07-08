@@ -1,3 +1,4 @@
+from collections import namedtuple
 from globals import Db, api, config  # GLOBAL_IMPORT
 from routes.helpers import (
     auth_required,
@@ -11,6 +12,7 @@ from flask import (
 )
 
 app = Blueprint("admin", __name__, template_folder="templates", static_folder="static")
+NoteAccessUser = namedtuple("NoteAccessUser", ["id", "name", "can_remove", "reason"])
 
 
 @app.route("/admin")
@@ -27,6 +29,29 @@ def admin(userid):
         tutor_station = db.get_all_tutor_stations()
         piscines_dates = db.get_all_piscine_dates()
         custom_images = db.get_all_custom_images()
+        note_access = set(map(lambda a: (a["id"], a["name"]), db.get_all_note_access()))
+        all_tutors = set(map(lambda a: (a["id"], a["name"]), db.get_all_tutors()))
+        all_admin_users = set(
+            map(
+                lambda a: (a["id"], a["name"]),
+                filter(
+                    lambda a: bool(a),
+                    map(lambda a: db.get_user_by_id(a["user_id"]), admin),
+                ),
+            )
+        )
+    note_access.update(all_tutors)
+    note_access.update(all_admin_users)
+
+    note_access_final = []
+    for u in note_access:
+        reason: str = "added"
+        if u in all_tutors:
+            reason = "tutor"
+        if u in all_admin_users:
+            reason = "admin"
+        note_access_final.append(NoteAccessUser(u[0], u[1], reason == "added", reason))
+    note_access_final.sort(key=lambda a: a.id)
     return render_template(
         "admin.html",
         user=userid,
@@ -38,6 +63,7 @@ def admin(userid):
         tags=tags,
         piscines_dates=piscines_dates,
         custom_images=custom_images,
+        note_access=note_access_final,
         update_key=config.update_key,
     )
 
@@ -296,4 +322,40 @@ def remove_piscine_date(ban_id, csrf, userid):
         return "Please refresh and try again", 401
     with Db() as db:
         db.remove_piscine_date(int(ban_id))
+    return ""
+
+
+##
+## NOTE ACCESS
+##
+
+
+@app.route("/admin/add/note_access", methods=["POST"])
+@auth_required
+def set_note_access(userid):
+    if not userid["admin"]:
+        return "Not authorized", 401
+    if not verify_csrf(request.form["csrf"]):
+        return "Please refresh and try again", 401
+    with Db() as db:
+        print(request.form)
+        login = request.form["login"].strip().lower()
+        user = db.get_user_profile(login, api)
+        if user is None:
+            user = db.get_user_profile(login, api)
+        if user is None:
+            return f"{login} not found", 404
+        db.set_note_access(userid=user["id"], access=True)
+    return ""
+
+
+@app.route("/admin/remove/note_access/<int:id>/<csrf>")
+@auth_required
+def remove_note_access(id, csrf, userid):
+    if not userid["admin"]:
+        return "Not authorized", 401
+    if not verify_csrf(csrf):
+        return "Please refresh and try again", 401
+    with Db() as db:
+        db.set_note_access(id, access=False)
     return ""

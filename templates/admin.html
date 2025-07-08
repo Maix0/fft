@@ -237,6 +237,31 @@
 			</div>
 		</div>
 	</div>
+	
+	<div class="modal fade" id="createNoteAccessModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form method="POST" id="createNoteAccess">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5">Ajouter une personne au note Tuteurs</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="form-floating mb-3">
+							<input type="text" name="login" class="form-control" id="input-login" placeholder="Lorem ipsum...">
+							<label for="input-campus">Login</label>
+						</div>
+					</div>
+					<input type="hidden" name="csrf" value="{{ create_csrf() }}">
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<button type="submit" class="btn btn-primary">Confirmer</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
 	<div class="p-5 mb-3 text-center bg-body-tertiary rounded-3 align-vertical">
 		<img class="bi mt-4 mb-3 rounded-circle" src="{{ user.custom_image_link if user.custom_image_link else user.image_medium }}" width="100" height="100" alt="pp">
@@ -493,6 +518,46 @@
 		</table>
 	</div>
 
+	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary">
+		<h4>Note Access
+			<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createNoteAccessModal">+
+			</button>
+		</h4>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">User ID</th>
+				<th scope="col">Login</th>
+				<th scope="col">Reason</th>
+				<th scope="col">-</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for element in note_access %}
+				<tr>
+					<td>{{ element.id }}</th>
+					<td>{{ element.name }}</td>
+					<td>
+						{% if element.reason == "admin" %}
+						<span class="badge badge-sm align-vertical bg-danger text-dark">ADMIN</div>
+						{% elif element.reason == "tutor" %}
+						<span class="badge badge-sm align-vertical bg-info text-dark">TUTOR</div>
+						{% elif element.reason == "added" %}
+						<span class="badge badge-sm align-vertical bg-success text-dark">ADDED</div>
+						{% else %}
+						<span class="badge badge-sm align-vertical bg-secondary text-dark">UNKNOWN</div>
+						{% endif %}
+					</td>
+					<td>
+						{% if element.can_remove %}
+							<button onclick="del_note_access({{ element.id }})" class="btn btn-danger btn-sm">-</button>
+						{%endif %}
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
 
 {% endblock %}
 
@@ -550,6 +615,16 @@
 		
 		function del_custom_image(id) {
 			fetch(`/admin/remove/custom_image/${id}/{{ create_csrf() }}`).then(async response => {
+				triggerToast(await response.text(), response.status === 200);
+				location.reload()
+			}).catch(error => {
+				triggerToast(`Une erreur s'est produite (${error.status})`, false);
+				console.log(error)
+			});
+		}
+		
+		function del_note_access(id) {
+			fetch(`/admin/remove/note_access/${id}/{{ create_csrf() }}`).then(async response => {
 				triggerToast(await response.text(), response.status === 200);
 				location.reload()
 			}).catch(error => {
@@ -707,6 +782,20 @@
 			const formData = new FormData(event.target);
 
 			fetch('/admin/add/piscine_date', {
+				method: 'POST',
+				body: formData
+			}).then(async response => {
+				triggerToast(await response.text(), response.status === 200);
+				location.reload();
+			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
+		});
+		
+		document.getElementById('createNoteAccess').addEventListener('submit', function (event) {
+			event.preventDefault();
+
+			const formData = new FormData(event.target);
+
+			fetch('/admin/add/note_access', {
 				method: 'POST',
 				body: formData
 			}).then(async response => {
