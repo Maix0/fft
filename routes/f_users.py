@@ -23,9 +23,8 @@ def getuser(login, userid):
         custom_img = db.get_custom_image(user["id"])
     user["is_friend"] = is_friend
     user["position"] = get_position(user["name"])
-    if not userid["is_tutor"]:
+    if not userid["note_access"]:
         user["note"] = ""
-
     if custom_img["custom_image_link"]:
         user["image"] = custom_img["custom_image_link"]
     else:

@@ -264,7 +264,7 @@ def friends_route(userid):
 @app.route("/profile/tutors/setnote", methods=["POST"])
 @auth_required
 def add_whilelist(userid):
-    if not userid["is_tutor"]:
+    if not userid["note_access"]:
         return "Not authorized", 401
     with Db() as db:
         user_id = int(request.form["user_id"].strip().lower())

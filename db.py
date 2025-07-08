@@ -548,8 +548,8 @@ class Db:
         return req.fetchall()
 
     def get_note_access(self, userid: int):
-        req = self.cur.execute("SELECT note_access FROM  USERS WHERE id = ?", [userid])
-        return req.fetchone()
+        req = self.cur.execute("SELECT note_access FROM USERS WHERE id = ?", [userid])
+        return req.fetchone()['note_access']
 
     def set_note_access(self, userid: int, access: bool):
         req = self.cur.execute(

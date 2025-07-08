@@ -64,8 +64,11 @@ def auth_required(function):
         theme = db.get_theme(userid["userid"])
         tag = db.get_user_tag(userid["userid"])
         is_tutor = db.is_tutors(userid["userid"])
+        note_access = db.get_note_access(userid["userid"])
         if is_tutor is None:
             is_tutor = False
+        if note_access is None:
+            note_access = False
         db.close()
         userid["admin"] = is_admin
         userid["tag"] = tag["tag"]
@@ -73,7 +76,8 @@ def auth_required(function):
         userid["login"] = details["name"]
         userid["image_medium"] = proxy_images(details["image_medium"])
         userid["theme"] = theme
-        userid["is_tutor"] = is_tutor or is_admin
+        userid["is_tutor"] = is_tutor
+        userid["note_access"] = bool(is_tutor) or bool(is_admin) or bool(note_access)
         g.user = userid
         kwargs["userid"] = userid
         return function(*args, **kwargs)

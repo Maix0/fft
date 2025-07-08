@@ -62,7 +62,7 @@
                 <!-- Note Tuteur-->
                 <div class="rounded m-2 p-1"
                      id="FP-note"
-                     {{ 'hidden' if not g.user['is_tutor'] else ''}}>
+                     {{ 'hidden' if not g.user['note_access'] else '' }}>
                     <div class="container mb-2 p-2 shadow rounded bg-body-tertiary text-center">
                         <div>
                             <span class="fw-bolder text-decoration-underline">Note Tutor</span>
