@@ -75,9 +75,16 @@ class Api:
     def get_user_id_by_login(self, login: str):
         self.add_rate()
         data, status, headers = self.get("/campus/1/users", [f"filter[login]={login}"])
+        print(login, status, data)
         if status == 200:
             if len(data):
                 return data[0]["id"]
+            else: 
+                self.add_rate()
+                data, status, headers = self.get("/campus/54/users", [f"filter[login]={login}"])
+                if status == 200:
+                    if len(data):
+                        return data[0]["id"]
         return 0
 
     def get_all_in_group(self, group_id: int):
