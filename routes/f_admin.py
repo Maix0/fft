@@ -52,6 +52,7 @@ def admin(userid):
             reason = "admin"
         note_access_final.append(NoteAccessUser(u[0], u[1], reason == "added", reason))
     note_access_final.sort(key=lambda a: a.id)
+    note_access_final.sort(key=lambda a: a.reason)
     return render_template(
         "admin.html",
         user=userid,
