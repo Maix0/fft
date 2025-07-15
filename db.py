@@ -89,11 +89,16 @@ class Db:
         tag = god("USERS", "tag", uid)
         custom_image_link = god("USERS", "custom_image_link", uid)
         note = god("USERS", "note", uid)
+        note_access = god("USERS", "note_access", uid);
         if not campus or type(campus) is not int:
             campus = 1
         self.cur.execute(
-            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus, tag, custom_image_link, note) "
-            f"VALUES(?, ?, ?, ?, ?, {active}, {campus}, (SELECT COALESCE({tag}, NULL)),  (SELECT COALESCE({custom_image_link}, NULL)),  (SELECT COALESCE({note}, NULL)))",
+            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus, tag, custom_image_link, note, note_access)"
+            f"VALUES(?, ?, ?, ?, ?, {active}, {campus}, "
+            f"(SELECT COALESCE({tag}, NULL)),"
+            f"(SELECT COALESCE({custom_image_link}, NULL)),"
+            f"(SELECT COALESCE({note}, NULL)),"
+            f"(SELECT COALESCE({note_access}, NULL)))",
             [
                 uid,
                 user_data["login"],
