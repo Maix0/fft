@@ -1,4 +1,4 @@
-{% extends 'template.html' %}
+{% extends "template.html" %}
 {% block css %}
 	<style>
 		.align-vertical {
@@ -13,12 +13,12 @@
 			display: none;
 		}
 	</style>
-{% endblock %}
+{% endblock css %}
 {% block content %}
 	<div class="modal fade" id="ChangeTagModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="changeTag">
+				<form method="post" id="changeTag">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Changer le Admin Tag</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -43,7 +43,7 @@
 	<div class="modal fade" id="ChangeUserTagModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="setUserTag">
+				<form method="post" id="setUserTag">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Changer le Tag</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -72,7 +72,7 @@
 	<div class="modal fade" id="changeCustomImageModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="changeCustomImage">
+				<form method="post" id="changeCustomImage">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Changer L'image</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -100,7 +100,7 @@
 	<div class="modal fade" id="createPiscineModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="createPiscine">
+				<form method="post" id="createPiscine">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Créer une piscine</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -129,7 +129,7 @@
 	<div class="modal fade" id="addWhitelistModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="CreateWhitelist">
+				<form method="post" id="CreateWhitelist">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Ajouter une personne sur la Whitelist</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -154,7 +154,7 @@
 	<div class="modal fade" id="createSilentModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="createSilent">
+				<form method="post" id="createSilent">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Créer un cluster slientieux</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -183,7 +183,7 @@
   <div class="modal fade" id="createTutorStationModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="createTutorStation">
+				<form method="post" id="createTutorStation">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Créer un poste Tuteur</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -212,7 +212,7 @@
 	<div class="modal fade" id="createPiscineDateModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="createPiscineDate">
+				<form method="post" id="createPiscineDate">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Ajouter une date de Piscine</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -241,7 +241,7 @@
 	<div class="modal fade" id="createNoteAccessModal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form method="POST" id="createNoteAccess">
+				<form method="post" id="createNoteAccess">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5">Ajouter une personne au note Tuteurs</h1>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -277,7 +277,7 @@
 		<button class="btn btn-outline-danger text-center" onclick="updateTutors()">Force Refresh Tutors</button>
 	</div>
 	<div class="container mb-2 p-2 shadow rounded bg-body-tertiary">
-		<form method="POST" id="changetagforme">
+		<form method="post" id="changetagforme">
 			<div class="input-group mb-3">
 				<input type="text" name="tag" class="form-control" value='{{ user.admin.tag }}'>
 				<input type="hidden" name="csrf" class="form-control" value='{{ create_csrf() }}'>
@@ -293,13 +293,13 @@
 				<th scope="col">User ID</th>
 				<th scope="col">Level</th>
 				<th scope="col">Tag</th>
-				<th scope="col">-</td>
+				<th scope="col">-</th>
 			</tr>
 			</thead>
 			<tbody>
 			{% for user in admins %}
 				<tr>
-					<td>{{ user.user_id }}</td>
+					<th scope="row">{{ user.user_id }}</th>
 					<td>{{ user.level }}</td>
 					<td> <span class="badge badge-sm align-vertical bg-danger">{{ user.tag | safe }}</span> </td>
 					<td>
@@ -356,12 +356,12 @@
 			</thead>
 			<tbody>
 			{% for user in tags %}
-				<tr>
+e			<tr>
 					<th scope="row">{{ user.id }}</th>
 					<td> {{ user.name }}</td> 
 					<td> <span class="badge badge-sm align-vertical bg-info text-dark">{{ user.tag | safe }}</span> </td>
 					<td>
-						<button class="btn btn-info btn-sm" onclick="openChangeUserTagFor('{{ user.name }}', '{{ user.tag }}')">Edit</button>
+						<button class="btn btn-info btn-sm" onclick='openChangeUserTagFor({{ user.name | tojson }}, {{ user.tag | tojson }})'>Edit</button>
 					</td>
 				</tr>
 			{% endfor %}
@@ -505,11 +505,11 @@
 			<tbody>
 			{% for element in custom_images %}
 				<tr>
-					<td>{{ element.id }}</th>
+					<th>{{ element.id }}</th>
 					<td>{{ element.name }}</td>
 					<td>{{ element.custom_image_link }}</td>
 					<td>
-						<button onclick="openCustomImage('{{element.name}}', '{{element.custom_image_link}}')" class="btn btn-info btn-sm">Edit</button>
+						<button onclick="openCustomImage('{{ element.name }}', '{{ element.custom_image_link }}')" class="btn btn-info btn-sm">Edit</button>
 						<button onclick="del_custom_image({{ element.id }})" class="btn btn-danger btn-sm">-</button>
 					</td>
 				</tr>
@@ -535,23 +535,23 @@
 			<tbody>
 			{% for element in note_access %}
 				<tr>
-					<td>{{ element.id }}</th>
+					<th>{{ element.id }}</th>
 					<td>{{ element.name }}</td>
 					<td>
 						{% if element.reason == "admin" %}
-						<span class="badge badge-sm align-vertical bg-danger text-dark">ADMIN</div>
+						<span class="badge badge-sm align-vertical bg-danger text-dark">ADMIN</span>
 						{% elif element.reason == "tutor" %}
-						<span class="badge badge-sm align-vertical bg-info text-dark">TUTOR</div>
+						<span class="badge badge-sm align-vertical bg-info text-dark">TUTOR</span>
 						{% elif element.reason == "added" %}
-						<span class="badge badge-sm align-vertical bg-success text-dark">ADDED</div>
+						<span class="badge badge-sm align-vertical bg-success text-dark">ADDED</span>
 						{% else %}
-						<span class="badge badge-sm align-vertical bg-secondary text-dark">UNKNOWN</div>
+						<span class="badge badge-sm align-vertical bg-secondary text-dark">UNKNOWN</span>
 						{% endif %}
 					</td>
 					<td>
 						{% if element.can_remove %}
 							<button onclick="del_note_access({{ element.id }})" class="btn btn-danger btn-sm">-</button>
-						{%endif %}
+						{% endif %}
 					</td>
 				</tr>
 			{% endfor %}
@@ -559,7 +559,7 @@
 		</table>
 	</div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block scripts %}
   <script>
@@ -835,4 +835,4 @@
 		}
 
 	</script>
-{% endblock %}
+{% endblock scripts %}
