@@ -3,6 +3,11 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     whakaahua.url = "github:maix0/whakaahua";
+    dbmlSqlite = {
+      url = "github:maix0/DBML_SQLite";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
 
   outputs = {
@@ -16,6 +21,7 @@
     in {
       devShell = pkgs.mkShellNoCC {
         packages = [
+          inputs.dbmlSqlite.packages.${system}.default
           (with pkgs.python3.pkgs;
             python.withPackages (pypkgs:
               with pypkgs; [

@@ -1,5 +1,29 @@
 {
   "nodes": {
+    "dbmlSqlite": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "pyDBML-src": "pyDBML-src"
+      },
+      "locked": {
+        "lastModified": 1754159933,
+        "narHash": "sha256-6ZN+Gc3XkwKZGluNDdbVrsgWlNGNWj920xdHouSYez4=",
+        "owner": "maix0",
+        "repo": "DBML_SQLite",
+        "rev": "2e147df03510f5b0a3d54a8a98e72b8b3b3a17c8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "maix0",
+        "repo": "DBML_SQLite",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -114,8 +138,25 @@
         "type": "github"
       }
     },
+    "pyDBML-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1741780348,
+        "narHash": "sha256-ZCrg4XD9oSVapVRmoBgRN0bmSUzIE0topOjZLM+H08o=",
+        "owner": "Vanderhoof",
+        "repo": "PyDBML",
+        "rev": "5c6a9173580d7273a6799cdd725eabd3a2e76911",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Vanderhoof",
+        "repo": "PyDBML",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
+        "dbmlSqlite": "dbmlSqlite",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "whakaahua": "whakaahua"
