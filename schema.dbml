@@ -9,6 +9,7 @@ Table USERS {
   active TIMESTAMP [not null, default: 0]
   campus INTEGER [not null, default: 1]
   tag TEXT [null, default: `NULL`]
+  note TEXT [null, default: "", note: "@deprecated"]
   custom_image_link TEXT [null, default: `NULL`]
   note_access INTEGER [not null, default: 0]
 }
@@ -30,6 +31,7 @@ Table FRIENDS {
   Indexes {
     (who, has) [unique]
   }
+
 }
 
 Table DEAD_PC {
@@ -43,6 +45,7 @@ Table DEAD_PC {
   Indexes {
     (issuer, station) [unique]
   }
+
 }
 
 Table PROFILES {
@@ -108,8 +111,8 @@ Table NOTES {
   author INTEGER [not null, ref: > USERS.id]
   text TEXT [not null]
   at TIMESTAMP [not null, default: `CURRENT_TIMESTAMP`]
-  last_edited TIMESTAMP [null, default: `NULL`]
-  last_edited_by INTEGER [null, ref: >USERS.id]
+  edited_from INTEGER [null, ref: > NOTES.id, default: `NULL`]
+  visible BOOLEAN [not null, default: 1]
 }
 
 
