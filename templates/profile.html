@@ -34,7 +34,7 @@
                             {{ user.position if user.position else 'Absent' }} {{ user.last_active }}
                             {% if user.position %}<a class="fa-solid fa-users-viewfinder" href="/goto/{{ user.position }}"></a>{% endif %}
                         </span>
-                        {% if userid['is_tutor'] %}
+                        {% if userid['note_access'] %}
                             <div class="rounded m-2 p-1" id="FP-note">
                                 <div class="container mb-2 p-2 shadow rounded bg-body-tertiary text-center">
                                     <div>
