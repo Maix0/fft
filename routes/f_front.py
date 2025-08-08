@@ -1,3 +1,4 @@
+from db.notes import NoteDb
 from globals import Db, api, config  # GLOBAL_IMPORT
 from routes.helpers import (
     arrow,
@@ -266,7 +267,7 @@ def friends_route(userid):
 def add_whilelist(userid):
     if not userid["note_access"]:
         return "Not authorized", 401
-    with Db() as db:
+    with NoteDb() as db:
         user_id = int(request.form["user_id"].strip().lower())
         if user_id == 0:
             return "Login does not exist", 404
