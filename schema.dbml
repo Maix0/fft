@@ -8,8 +8,8 @@ Table USERS {
   lang VARCHAR(3) [not null, default: 'fr']
   active TIMESTAMP [not null, default: 0]
   campus INTEGER [not null, default: 1]
-  tag TEXT [null, default: NULL]
-  custom_image_link TEXT [null, default: NULL]
+  tag TEXT [null, default: `NULL`]
+  custom_image_link TEXT [null, default: `NULL`]
   note_access INTEGER [not null, default: 0]
 }
 
@@ -17,7 +17,7 @@ Table COOKIES {
   id INTEGER [pk, increment]
   userid INTEGER [not null, ref: >USERS.id]
   uuid VARCHAR(65) [unique, not null]
-  name VARCHAR(40) [null, default: NULL]
+  name VARCHAR(40) [null, default: `NULL`]
   creation TIMESTAMP [not null, default: `CURRENT_TIMESTAMP`]
 }
 
@@ -55,8 +55,8 @@ Table PROFILES {
 
 Table THEME {
   userid INTEGER [pk,ref:> USERS.id]
-  javascript TEXT [null, default: NULL]
-  css TEXT [null, default: NULL]
+  javascript TEXT [null, default: `NULL`]
+  css TEXT [null, default: `NULL`]
   enabled INTEGER [not null, default: 0]
 }
 
@@ -102,13 +102,13 @@ Table PISCINE_DATES {
   year TEXT [not null]
 }
 
-TABLE NOTES {
+Table NOTES {
   id INTEGER [pk, increment]
   who INTEGER [not null, ref: > USERS.id]
   author INTEGER [not null, ref: > USERS.id]
   text TEXT [not null]
   at TIMESTAMP [not null, default: `CURRENT_TIMESTAMP`]
-  last_edited TIMESTAMP [null]
+  last_edited TIMESTAMP [null, default: `NULL`]
   last_edited_by INTEGER [null, ref: >USERS.id]
 }
 

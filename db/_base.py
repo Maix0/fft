@@ -27,7 +27,7 @@ class BaseDb:
 
     # Management
     def initialize(self):
-        self.create_table("scheme.sql")
+        self.create_table("schema.sql")
         self.close()
 
     def commit(self):
