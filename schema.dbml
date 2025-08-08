@@ -1,0 +1,115 @@
+
+Table USERS {
+  id INTEGER [pk]
+  name VARCHAR(12) [not null, unique]
+  image VARCHAR(100) [null]
+  image_medium VARCHAR(100) [null]
+  pool VARCHAR(100) [not null]
+  lang VARCHAR(3) [not null, default: 'fr']
+  active TIMESTAMP [not null, default: 0]
+  campus INTEGER [not null, default: 1]
+  tag TEXT [null, default: NULL]
+  custom_image_link TEXT [null, default: NULL]
+  note_access INTEGER [not null, default: 0]
+}
+
+Table COOKIES {
+  id INTEGER [pk, increment]
+  userid INTEGER [not null, ref: >USERS.id]
+  uuid VARCHAR(65) [unique, not null]
+  name VARCHAR(40) [null, default: NULL]
+  creation TIMESTAMP [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table FRIENDS {
+  id INTEGER [pk, increment]
+  who INTEGER [not null, ref:> USERS.id]
+  has INTEGER [not null,ref:> USERS.id]
+  relation INTEGER [default: 0]
+
+  Indexes {
+    (who, has) [unique]
+  }
+}
+
+Table DEAD_PC {
+  id INTEGER [pk, increment]
+  issuer INTEGER [not null,ref:> USERS.id]
+  station VARCHAR(8) [not null]
+  issue INTEGER [not null]
+  solved INTEGER [not null, default: 0]
+  since TIMESTAMP [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (issuer, station) [unique]
+  }
+}
+
+Table PROFILES {
+  userid INTEGER [pk,ref:> USERS.id]
+  website TEXT [not null, default: '']
+  github TEXT [not null, default: '']
+  discord VARCHAR(40) [not null, default: '']
+  recit TEXT [not null, default: '']
+}
+
+Table THEME {
+  userid INTEGER [pk,ref:> USERS.id]
+  javascript TEXT [null, default: NULL]
+  css TEXT [null, default: NULL]
+  enabled INTEGER [not null, default: 0]
+}
+
+Table WHITELIST {
+  id INTEGER [pk, increment,ref:> USERS.id]
+  user_id INTEGER [not null, unique]
+  user_login TEXT [not null, unique]
+}
+
+Table PERMISSIONS {
+  user_id INTEGER [pk, ref: > USERS.id]
+  level INTEGER [default: 0, not null]
+  show_tag INTEGER [default: 0, not null]
+  tag TEXT [default: 'admin']
+}
+
+Table PISCINES {
+  id INTEGER [pk]
+  campus INTEGER [not null, default: 1]
+  cluster TEXT [not null]
+}
+
+Table SILENTS {
+  id INTEGER [pk]
+  campus INTEGER [default: 1]
+  cluster TEXT [not null]
+}
+
+Table TUTOR_STATION {
+  id INTEGER [pk, increment]
+  campus INTEGER [default: 1]
+  station TEXT [unique]
+}
+
+Table TUTORS {
+  id INTEGER [pk,ref:> USERS.id]
+  name TEXT [not null]
+}
+
+Table PISCINE_DATES {
+  id INTEGER [pk, increment]
+  month TEXT [not null]
+  year TEXT [not null]
+}
+
+TABLE NOTES {
+  id INTEGER [pk, increment]
+  who INTEGER [not null, ref: > USERS.id]
+  author INTEGER [not null, ref: > USERS.id]
+  text TEXT [not null]
+  at TIMESTAMP [not null, default: `CURRENT_TIMESTAMP`]
+  last_edited TIMESTAMP [null]
+  last_edited_by INTEGER [null, ref: >USERS.id]
+}
+
+
