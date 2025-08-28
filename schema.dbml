@@ -71,8 +71,6 @@ Table WHITELIST {
 
 Table PERMISSIONS {
   user_id INTEGER [pk, ref: > USERS.id]
-  level INTEGER [default: 0, not null]
-  show_tag INTEGER [default: 0, not null]
   tag TEXT [default: 'admin']
 }
 
