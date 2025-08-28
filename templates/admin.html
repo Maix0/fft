@@ -265,7 +265,7 @@
 
 	<div class="p-5 mb-3 text-center bg-body-tertiary rounded-3 align-vertical">
 		<img class="bi mt-4 mb-3 rounded-circle" src="{{ user.custom_image_link if user.custom_image_link else user.image_medium }}" width="100" height="100" alt="pp">
-		<h1 class="text-body-emphasis"> {{ user.login }} [perm:{{ user.admin.level }}]
+		<h1 class="text-body-emphasis"> {{ user.login }} 
 			{%- if user.tag -%}
 				<span class="badge badge-sm align-vertical bg-info text-dark">{{ user.tag | safe }}</span>
 			{%- endif -%}
@@ -291,7 +291,6 @@
 			<thead>
 			<tr>
 				<th scope="col">User ID</th>
-				<th scope="col">Level</th>
 				<th scope="col">Tag</th>
 				<th scope="col">-</th>
 			</tr>
@@ -300,7 +299,6 @@
 			{% for user in admins %}
 				<tr>
 					<th scope="row">{{ user.user_id }}</th>
-					<td>{{ user.level }}</td>
 					<td> <span class="badge badge-sm align-vertical bg-danger">{{ user.tag | safe }}</span> </td>
 					<td>
 						<button class="btn btn-info btn-sm" onclick="openChangeTagFor({{ user.user_id }} , '{{ user.tag }}')">Edit</button>
