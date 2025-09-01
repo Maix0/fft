@@ -174,7 +174,7 @@
                 default = "/var/lib/fft/database.db";
               };
               imageStoreDirectory = mkOption {
-                type = types.optional types.path;
+                type = types.nullOr types.path;
                 description = "image store directory";
                 default = "/var/lib/fft/images";
               };

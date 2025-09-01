@@ -37,3 +37,5 @@ redis_port = os.environ.get("F42_REDIS_PORT")
 campuses_to_update = [1]
 sentry_traces_sample_rate = 0.4
 sentry_profiles_sample_rate = 0.4
+
+image_store = os.environ.get("F42_IMAGE_STORE")
