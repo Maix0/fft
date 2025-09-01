@@ -67,6 +67,7 @@ def tutors_notes(userid):
             else:
                 u["admin"]["tag"] = u["admin"]["tag"][0]["tag"]
             u["position"] = get_position(u["name"])
+            u["has_custom_image"] = db.get_custom_image(user["id"]) is not None
             if u["tag"] is None:
                 u["tag"] = ""
             if u["active"] is None:

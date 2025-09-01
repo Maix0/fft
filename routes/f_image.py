@@ -44,9 +44,6 @@ def set_image(login, userid):
         if not userid["admin"] and id["id"] != userid["userid"]:
             return Response("not allowed to edit image", status=403)
         body = BytesIO(request.get_data())
-        with open("./img", "bw") as f:
-            f.write(body.getbuffer())
-        body.seek(0)
         try:
             save_apng(
                 convert_to_apng(Image.open(body)),
