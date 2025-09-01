@@ -10,7 +10,6 @@ Table USERS {
   campus INTEGER [not null, default: 1]
   tag TEXT [null, default: `NULL`]
   note TEXT [null, default: "", note: "@deprecated"]
-  custom_image_link TEXT [null, default: `NULL`]
   note_access INTEGER [not null, default: 0]
 }
 
@@ -31,7 +30,6 @@ Table FRIENDS {
   Indexes {
     (who, has) [unique]
   }
-
 }
 
 Table DEAD_PC {
@@ -113,4 +111,8 @@ Table NOTES {
   visible BOOLEAN [not null, default: 1]
 }
 
-
+Table IMAGES {
+  id INTEGER [pk, ref: > USERS.id]
+  by INTEGER [not null, ref: > USERS.id]
+  at TIMESTAMP [not null, default: `CURRENT_TIMESTAMP`]
+}

@@ -1,6 +1,7 @@
 from globals import Db, api, config  # GLOBAL_IMPORT
 from routes.helpers import (
     auth_required,
+    custom_image,
     get_position,
     proxy_images,
     redirect,
@@ -25,11 +26,10 @@ def getuser(login, userid):
     user["position"] = get_position(user["name"])
     if not userid["note_access"]:
         user["note"] = ""
-    if custom_img["custom_image_link"]:
-        user["image"] = custom_img["custom_image_link"]
+    if custom_img:
+        user["image"] = custom_image(user["name"])
     else:
         user["image"] = proxy_images(user["image"])
-
     return dict(user)
 
 

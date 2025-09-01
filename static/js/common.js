@@ -174,6 +174,8 @@ function openFriend(name, auto_reload = false) {
 				// will be empty string on none-tutor user
 				if (note && data["note"])
 					note.innerText = data["note"];
+				else
+					note.innerText = "";
 				if (noteEditBtn)
 					noteEditBtn.onclick = () => openEditNote(data["id"], data["note"]);
 				

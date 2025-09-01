@@ -15,16 +15,14 @@ class UserDb(BaseDb):
             else god("USERS", "active", uid)
         )
         tag = god("USERS", "tag", uid)
-        custom_image_link = god("USERS", "custom_image_link", uid)
         note = god("USERS", "note", uid)
         note_access = god("USERS", "note_access", uid)
         if not campus or type(campus) is not int:
             campus = 1
         self.cur.execute(
-            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus, tag, custom_image_link, note, note_access)"
+            "INSERT OR REPLACE INTO USERS(id, name, image, image_medium, pool, active, campus, tag, note, note_access)"
             f"VALUES(?, ?, ?, ?, ?, {active}, {campus}, "
             f"(SELECT COALESCE({tag}, NULL)),"
-            f"(SELECT COALESCE({custom_image_link}, NULL)),"
             f"(SELECT COALESCE({note}, NULL)),"
             f"(SELECT COALESCE({note_access}, NULL)))",
             [

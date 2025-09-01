@@ -10,7 +10,7 @@
                         <div id="case-{{ u.name }}"
                              class="card shadow m-2 pl-fix card-size grow"
                              onclick="openFriend('{{ u.name }}', true)">
-                            <img src="{{ proxy_images(u.custom_image_link if u.custom_image_link else u.image_medium) }}"
+							<img src="{{ proxy_images(custom_image(u.name) if u.has_custom_image else u.image_medium) }}"
                                  class="m-1 card-img-top card-img-size"
                                  alt="{{ u.name }}'s image">
                             <div class="card-body">

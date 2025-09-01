@@ -93,7 +93,7 @@
 							{%- set text_color = '' -%}
 							{%- set img = '<i class="fa-solid fa-user"></i>' -%}
 							{%- if y in locations -%}
-								{%- set img = '<img loading="lazy" class="profile-pic2" alt="" src="' + proxy_images(locations[y]['user']['image']['versions']['small']) + '">' -%}
+								{%- set img = '<img loading="lazy" class="profile-pic2" alt="" src="' + (custom_image(locations[y]['user']['login']) if locations[y]['has_custom_image'] else proxy_images(locations[y]['user']['image']['versions']['small'])) + '">' -%}
 							{%- elif actual_cluster in piscine and y in tutor_station -%}
 								{%- set img = '<i class="fa-solid fa-shield tutor-shield"></i>' -%}
 							{%- endif -%}

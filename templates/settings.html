@@ -1,6 +1,6 @@
-{% extends 'template.html' %}
+{% extends "template.html" %}
 {% block css %}
-	<style>
+    <style>
 		.input-size {
 			width: 6.5rem;
 		}
@@ -33,143 +33,237 @@
 		.card {
 			margin-top: 0.4rem;
 		}
-	</style>
-{% endblock %}
+    </style>
+{% endblock css %}
 {% block content %}
-
-	<div class="container">
-		<div class="row mt-3">
-			<div class="col-md-2 p-1 rounded">
-				<ul class="list-group">
-					<button type="button" class="list-group-item settings-switcher list-group-item-action active"
-					        data-category="profile" aria-current="true">
-						<i class="fa-solid fa-user"></i> Profile
-					</button>
-					<button type="button" class="list-group-item settings-switcher list-group-item-action"
-					        data-category="settings">
-						<i class="fa-solid fa-gear"></i> Paramètres
-					</button>
-					<button type="button" class="list-group-item settings-switcher list-group-item-action"
-					        data-category="sessions">
-						<i class="fa-solid fa-key"></i> Sessions
-					</button>
-				</ul>
-			</div>
-			<div class="col-md-9">
-				<div id="profile">
-					<form action="/settings/profile" method="post" id="form-settings-profile">
-						<div class="input-group mb-3">
-							<span class="input-group-text input-size" id="github-input">
-								<i class="fa-brands fa-github"></i>&nbsp;GitHub
-							</span>
-							<input type="text" name="github" class="form-control"
-							       value="{{ '' if user['github'] == None else user.github }}"
-							       placeholder="https://github.com/username" aria-label="github link"
-							       aria-describedby="github-input">
-						</div>
-						<div class="input-group mb-3">
-							<span class="input-group-text input-size" id="discord-input">
-								<i class="fa-brands fa-discord"></i>&nbsp;Discord
-							</span>
-							<input type="text" name="discord" class="form-control"
-							       value="{{ '' if user['discord'] == None else user.discord }}"
-							       placeholder="Norminet#1234" aria-label="discord tag"
-							       aria-describedby="discord-input">
-						</div>
-						<div class="input-group mb-3">
-							<span class="input-group-text input-size" id="website-input"><i
-									class="fa-solid fa-globe"></i>&nbsp;Website</span>
-							<input type="text" name="website" class="form-control"
-							       value="{{ '' if user['website'] == None else user.website }}"
-							       placeholder="https://example.com" aria-label="Website url"
-							       aria-describedby="website-input">
-						</div>
-						<div class="form-floating">
-							<textarea class="form-control" name="description" id="biographyArea" style="height: 100px"
-							          maxlength="1500">{{ '' if user['recit'] == None else user.recit }}</textarea>
-							<label for="biographyArea">Biographie (<span
-									id="biography-counter">{{ len(user['recit'] or '') or 0 }}</span>/1500)</label>
-						</div>
-						<button type="submit" class="btn btn-primary mt-2">Sauvegarder</button>
-						<button type="submit" class="btn btn-secondary mt-2"
-						        onclick="location.href = '/profile/{{ user.name }}';">Voir mon profil
-						</button>
-					</form>
-				</div>
-				<div hidden id="settings">
-					<!-- Custom theme -->
-					<div class="card m-1">
-						<div class="card-body">
-							<h5 class="card-title"><i class="fa-solid fa-paint-roller"></i> Thème</h5>
-							<p>
-								Vous pouvez insérer un style CSS et du Javascript pour créer des thèmes et extension
-								personnalisé.
-								Ils seront chargé à chaque page. (5 000 caractères maximum)<br>
-								<i class="fa-solid fa-warning text-warning"></i>Si le site est inaccessible suite à un
-								changement, accédez à
-              <a href="/reset">{{ domain }}/reset</a>
-							</p>
-							<div class="form-check mb-3">
-								<input class="form-check-input" {{ 'checked' if theme.enabled == 1 else '' }} type="checkbox" value="" id="theme-enabled">
-								<label class="form-check-label" for="theme-enabled">
-									Activer le thème
-								</label>
-							</div>
-
-							<div class="row mb-3">
-								<div class="col-md">
-									<h6 class="card-title">JavaScript</h6>
-									<textarea id="theme-js" class="form-control" maxlength="5000">{{ theme.javascript }}</textarea>
-								</div>
-								<div class="col-md">
-									<h6 class="card-title">CSS</h6>
-									<textarea id="theme-css" class="form-control" maxlength="5000">{{ theme.css }}</textarea>
-								</div>
-							</div>
-							<button class="btn btn-primary" onclick="theme_save();">Sauvegarder</button>
-							<button class="btn btn-primary" onclick="theme_reload();">Sauvegarder & Recharger la page
-							</button>
-						</div>
-					</div>
-					<!-- User -->
-					<div class="card m-1">
-						<div class="card-body">
-							<h5 class="card-title"><i class="fa-solid fa-user"></i> Utilisateur</h5>
-							<button class="btn btn-secondary" onclick="location.href='/update_campus_id/';">
-								Mettre à jour son campus principal
-							</button>
-							<button class="btn btn-danger" id="disconnect">Se déconnecter</button>
-						</div>
-					</div>
-				</div>
-				<div hidden id="sessions">
-					<table class="table table-striped">
-						<thead>
-						<tr>
-							<th scope="col">Création</th>
-							<th scope="col">User-Agent</th>
-						</tr>
-						</thead>
-						<tbody>
-						{% for cookie in cookies %}
-							<tr>
-								<td>{{ cookie.creation }}</td>
-								<td>{{ cookie.name }}</td>
-							</tr>
-						{% endfor %}
-						</tbody>
-					</table>
-					<button class="btn btn-danger" onclick="reset_sessions();">Déconnecter toutes les sessions</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-{% endblock %}
-
+    <div class="modal fade"
+         id="changeOwnCustomImageModal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="changeOwnCustomImage">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Changer L'image</h1>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">
+                            <input type="file"
+                                   name="file_image"
+                                   class="form-control custom-file-input"
+                                   id="file_image">
+                            <label class="custom-file-label" for="file_image">Image</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Confirmer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-md-2 p-1 rounded">
+                <ul class="list-group">
+                    <button type="button"
+                            class="list-group-item settings-switcher list-group-item-action active"
+                            data-category="profile"
+                            aria-current="true">
+                        <i class="fa-solid fa-user"></i> Profile
+                    </button>
+                    <button type="button"
+                            class="list-group-item settings-switcher list-group-item-action"
+                            data-category="settings">
+                        <i class="fa-solid fa-gear"></i> Paramètres
+                    </button>
+                    <button type="button"
+                            class="list-group-item settings-switcher list-group-item-action"
+                            data-category="sessions">
+                        <i class="fa-solid fa-key"></i> Sessions
+                    </button>
+                    <button type="button"
+                            class="list-group-item settings-switcher list-group-item-action"
+                            data-category="customImage">
+                        <i class="fa-solid fa-image"></i> Custom Image
+                    </button>
+                </ul>
+            </div>
+            <div class="col-md-9">
+                <div id="customImage">
+                    <div class="form-floating">
+                        <button type="button" class="btn btn-primary" onclick="openCustomImage()">Change Custom Image</button>
+                        <button type="button" class="btn btn-danger" onclick="removeCustomImage()">Remove Custom Image</button>
+                    </div>
+                </div>
+                <div id="profile">
+                    <form action="/settings/profile"
+                          method="post"
+                          id="form-settings-profile">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text input-size" id="github-input">
+                                <i class="fa-brands fa-github"></i>&nbsp;GitHub
+                            </span>
+                            <input type="text"
+                                   name="github"
+                                   class="form-control"
+                                   value="{{ '' if user['github'] == None else user.github }}"
+                                   placeholder="https://github.com/username"
+                                   aria-label="github link"
+                                   aria-describedby="github-input">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text input-size" id="discord-input">
+                                <i class="fa-brands fa-discord"></i>&nbsp;Discord
+                            </span>
+                            <input type="text"
+                                   name="discord"
+                                   class="form-control"
+                                   value="{{ '' if user['discord'] == None else user.discord }}"
+                                   placeholder="Norminet#1234"
+                                   aria-label="discord tag"
+                                   aria-describedby="discord-input">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text input-size" id="website-input"><i class="fa-solid fa-globe"></i>&nbsp;Website</span>
+                            <input type="text"
+                                   name="website"
+                                   class="form-control"
+                                   value="{{ '' if user['website'] == None else user.website }}"
+                                   placeholder="https://example.com"
+                                   aria-label="Website url"
+                                   aria-describedby="website-input">
+                        </div>
+                        <div class="form-floating">
+                            <textarea class="form-control"
+                                      name="description"
+                                      id="biographyArea"
+                                      style="height: 100px"
+                                      maxlength="1500">{{ '' if user['recit'] == None else user.recit }}</textarea>
+                            <label for="biographyArea">
+                                Biographie (<span id="biography-counter">{{ len(user['recit'] or '') or 0 }}</span>/1500)
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Sauvegarder</button>
+                        <button type="submit"
+                                class="btn btn-secondary mt-2"
+                                onclick="location.href = '/profile/{{ user.name }}';">Voir mon profil</button>
+                    </form>
+                </div>
+                <div hidden id="settings">
+                    <!-- Custom theme -->
+                    <div class="card m-1">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fa-solid fa-paint-roller"></i> Thème
+                            </h5>
+                            <p>
+                                Vous pouvez insérer un style CSS et du Javascript pour créer des thèmes et extension
+                                personnalisé.
+                                Ils seront chargé à chaque page. (5 000 caractères maximum)
+                                <br>
+                                <i class="fa-solid fa-warning text-warning"></i>Si le site est inaccessible suite à un
+                                changement, accédez à
+                                <a href="/reset">{{ domain }}/reset</a>
+                            </p>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input"
+                                       {{ 'checked' if theme.enabled == 1 else '' }}
+                                       type="checkbox"
+                                       value=""
+                                       id="theme-enabled">
+                                <label class="form-check-label" for="theme-enabled">Activer le thème</label>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md">
+                                    <h6 class="card-title">JavaScript</h6>
+                                    <textarea id="theme-js" class="form-control" maxlength="5000">{{ theme.javascript }}</textarea>
+                                </div>
+                                <div class="col-md">
+                                    <h6 class="card-title">CSS</h6>
+                                    <textarea id="theme-css" class="form-control" maxlength="5000">{{ theme.css }}</textarea>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="theme_save();">Sauvegarder</button>
+                            <button class="btn btn-primary" onclick="theme_reload();">Sauvegarder & Recharger la page</button>
+                        </div>
+                    </div>
+                    <!-- User -->
+                    <div class="card m-1">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fa-solid fa-user"></i> Utilisateur
+                            </h5>
+                            <button class="btn btn-secondary"
+                                    onclick="location.href='/update_campus_id/';">
+                                Mettre à jour son campus principal
+                            </button>
+                            <button class="btn btn-danger" id="disconnect">Se déconnecter</button>
+                        </div>
+                    </div>
+                </div>
+                <div hidden id="sessions">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Création</th>
+                                <th scope="col">User-Agent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cookie in cookies %}
+                                <tr>
+                                    <td>{{ cookie.creation }}</td>
+                                    <td>{{ cookie.name }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button class="btn btn-danger" onclick="reset_sessions();">Déconnecter toutes les sessions</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
 {% block scripts %}
-	<script>
+    <script>
+		function removeCustomImage() {
+			fetch("/image/{{g.user.login }}/remove", {method: "DELETE"}).then(async response => {
+				triggerToast(await response.text(), response.status === 200);
+				location.reload()
+			}).catch(error => {
+				triggerToast(`Une erreur s'est produite (${error.status})`, false);
+				console.log(error)
+			});
+		}
 
+		function openCustomImage() { 
+			let modalElem = document.querySelector("#changeOwnCustomImageModal");
+			if (modalElem === undefined) return;
+			new bootstrap.Modal(modalElem).show();
+		}
+		
+		document.getElementById('changeOwnCustomImage').addEventListener('submit', async function (event) {
+			event.preventDefault();
+
+			let file = event.target.querySelector("input#file_image").files;
+			if (file.length !== 1)
+				return triggerToast("Please provide a file !", false);
+
+			fetch("/image/{{g.user.login}}/set", {
+				method: 'POST',
+				body: file[0],
+			}).then(async response => {
+				triggerToast(await response.text(), response.status === 200);
+				location.reload();
+			}).catch(error => triggerToast(`Une erreur s'est produite (${error.status})`, false));
+		});
+			
 		function reset_sessions() {
 			fetch('/sessions/reset').then(() => {
 				location.reload();
@@ -260,5 +354,5 @@
 		biographyArea.addEventListener('input', () => {
 			bio_counter.innerText = biographyArea.value.length;
 		});
-	</script>
-{% endblock %}
+    </script>
+{% endblock scripts %}

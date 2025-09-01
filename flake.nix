@@ -31,10 +31,11 @@
                 arrow
                 sentry-sdk
                 beautifulsoup4
+                pillow
               ]))
           pkgs.black
           pkgs.ruff
-          pkgs.sqlite
+          pkgs.sqlite-interactive
           pkgs.rlwrap
         ];
       };
@@ -60,6 +61,7 @@
                   requests
                   arrow
                   sentry-sdk
+                  pillow
                 ])}/bin/python ./app.py
               EOF
               chmod +x $out/bin/fft
@@ -171,6 +173,11 @@
                 description = "database Path";
                 default = "/var/lib/fft/database.db";
               };
+              imageStoreDirectory = mkOption {
+                type = types.optional types.path;
+                description = "image store directory";
+                default = "/var/lib/fft/images";
+              };
               domain = mkOption {
                 type = types.str;
                 description = "domain to be used";
@@ -221,15 +228,21 @@
                 requires = ["network.target"];
                 after = ["network.target"];
                 enable = true;
-                environment = {
-                  F42_PORT = toString (10000 + idx);
-                  F42_REDIS_PORT = toString cfg.redisPort;
-                  F42_REDIS_HOST = "localhost";
-                  F42_BOCAL_KEY = cfg.bocalToken;
-                  F42_UPDATE_KEY = cfg.updateToken;
-                  F42_DB = cfg.dbPath;
-                  F42_DOMAIN = cfg.domain;
-                };
+                environment =
+                  {
+                    F42_PORT = toString (10000 + idx);
+                    F42_REDIS_PORT = toString cfg.redisPort;
+                    F42_REDIS_HOST = "localhost";
+                    F42_BOCAL_KEY = cfg.bocalToken;
+                    F42_UPDATE_KEY = cfg.updateToken;
+                    F42_DB = cfg.dbPath;
+                    F42_DOMAIN = cfg.domain;
+                  }
+                  // (
+                    if cfg.imageStoreDirectory != null
+                    then {F42_IMAGE_STORE = cfg.imageStoreDirectory;}
+                    else {}
+                  );
                 serviceConfig = {
                   User = "fft";
                   Group = "nobody";
@@ -301,6 +314,9 @@
                   system.activationScripts.fft = lib.stringAfter ["var"] ''
                     mkdir -p /var/lib/fft
                     chown fft /var/lib/fft
+
+                    ${lib.optionalString (cfg.imageStoreDirectory != null) "mkdir -p ${lib.escapeShellArg cfg.imageStoreDirectory}"}
+                    ${lib.optionalString (cfg.imageStoreDirectory != null) "chown fft ${lib.escapeShellArg cfg.imageStoreDirectory}"}
                   '';
 
                   users.users.fft = {

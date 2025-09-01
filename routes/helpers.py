@@ -40,12 +40,19 @@ def proxy_images(url: str, light=False):
     )
 
 
+def custom_image(login: str):
+    if not login:
+        return "/static/img/unknown.jpg"
+    return f"/image/{login}"
+
+
 def auth_required(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
         token = request.cookies.get("token")
         db = Db(config.db_path)
         userid = db.get_user_by_bookie(token)
+        print(userid)
         if userid == 0:
             db.close()
             resp = make_response(redirect("/redirect_42", 307))
