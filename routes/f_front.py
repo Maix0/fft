@@ -67,7 +67,7 @@ def tutors_notes(userid):
             else:
                 u["admin"]["tag"] = u["admin"]["tag"][0]["tag"]
             u["position"] = get_position(u["name"])
-            u["has_custom_image"] = db.get_custom_image(user["id"]) is not None
+            u["has_custom_image"] = db.get_custom_image(u["id"]) is not None
             if u["tag"] is None:
                 u["tag"] = ""
             if u["active"] is None:
@@ -287,6 +287,7 @@ def tutors_route(userid):
         else:
             tutor["admin"]["tag"] = tutor["admin"]["tag"][0]["tag"]
         tutor["position"] = get_position(tutor["name"])
+        tutor["has_custom_image"] = db.get_custom_image(tutor["id"]) is not None
         if tutor["tag"] is None:
             tutor["tag"] = ""
         if tutor["active"] and tutor["position"] is None:
