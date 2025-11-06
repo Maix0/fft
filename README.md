@@ -1,3 +1,12 @@
+# Archived
+
+This project is archived since I am not allowed to host it anymore.
+
+Feel free to fork and selfhost this project if you want to. 
+
+Do note that some features should be removed otherwise you are risking some bad stuff...
+
+
 # Friends42
 
 ## Developer quick-start
